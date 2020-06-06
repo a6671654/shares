@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block left %}
+<li class="nav-item"> <a href="/"><i class="mdi mdi-home"></i> 首页</a> </li>
+<li class="nav-item active"> <a href="/shuoming/"><i class="mdi mdi-format-align-justify"></i> 使用说明</a> </li>
+{% endblock left %}
+
+{% block pagetitle %}
+<span class="navbar-page-title"> 使用说明 </span>
+{% endblock pagetitle %}
+
+{% block content %}
+    <div class="row">
+    <div class="col-sm-4 col-xs-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>基本流程</h4>
+            </div>
+            <div class="card-body">
+            <ul class="list-unstyled">
+                <li>1.点击日线、交易量等展开条件</li>
+                <li>2.选择所需条件（可多选）</li>
+                <li>3.点击确认查询显示同时符合以上条件的结果</li>
+            </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4 col-xs-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>历史数据查询说明</h4>
+            </div>
+            <div class="card-body">
+            <ul class="list-unstyled">
+                <li>1.点击屏幕左上方的绿色字体日期</li>
+                <li>2.在带有‘绿点’的日期中点击选择</li>
+                <li>3.按照基本流程即可查询历史数据</li>
+            </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4 col-xs-12">
+    <div class="card">
+        <div class="card-header">
+            <h4>手机端和PC端</h4>
+        </div>
+        <div class="card-body">
+        <ul class="list-unstyled">
+            <li>只有简单的适配了手机端，体验并不好</li>
+            <li>由于手机宽度显示，不显示开盘价和最低价</li>
+        </ul>
+        </div>
+    </div>
+    </div>
+    </div>
+    <div class="row">
+    <div class="col-sm-4 col-xs-12">
+    <div class="card">
+        <div class="card-header">
+            <h4>账号注册登入</h4>
+        </div>
+        <div class="card-body">
+        <ul class="list-unstyled">
+            <li>只是占个位置，还没想好开发什么功能</li>
+        </ul>
+        </div>
+    </div>
+    </div>
+    </div>
+{% endblock content %}

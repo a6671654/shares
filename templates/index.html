@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<link href="{% static 'css/calendar.css' %}" rel="stylesheet">
+<style type="text/css">
+ul, ol, li {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+</style>
+
+{% endblock head %}
+
+
+{% block content %}
+
+    <div class="row">
+    <div class="card">
+        <div class="card-header">
+            {% if nowtime %}
+            <h4>查询数据：<a href="javascript:void(0)" id="setdate">{{ nowtime }}</a></h4>
+            {% else %}
+            <h4>最新数据：<a href="javascript:void(0)" id="setdate">{{ newday.date }}</a></h4>
+            {% endif %}
+        </div>
+        <div class="card-body" id="header">
+            <div class="col-xs-4 col-md-2 col-sm-3"><p>日线<label class="lyear-switch switch-primary"><input type="checkbox" value="日线"><span></span> </label> </p></div>
+            <div class="col-xs-4 col-md-2 col-sm-3"><p>交易量<label class="lyear-switch switch-primary"><input type="checkbox" id="交易量"><span></span> </label> </p></div>
+            <div class="col-xs-4 col-md-2 col-sm-3"><p>MACD<label class="lyear-switch switch-primary"><input type="checkbox" id="MACD"><span></span> </label> </p></div>
+            <div class="col-xs-4 col-md-2 col-sm-3"><p>KDJ<label class="lyear-switch switch-primary"><input type="checkbox" id="KDJ"><span></span> </label> </p></div>
+            <div class="col-xs-4 col-md-2 col-sm-3"><p>布林线<label class="lyear-switch switch-primary"><input type="checkbox" id="BOLL"><span></span> </label> </p></div>
+            <p><br/><br/></p>
+        </div>
+    </div>
+    <div id="dd"></div>
+    <div class="card" id="chaxun" style="display: none;">
+        <div class="card-body">
+            <form action="/chaxun/" method="post" class="form-horizontal"  enctype="multipart/form-data">
+                {% csrf_token %}
+                {% if nowtime %}
+                    <input type="hidden" name="newtime" value="{{ nowtime }}">
+                {% else %}
+                    <input type="hidden" name="newtime" value="{{ newday.date }}">
+                {% endif %}
+                <div class="form-group col-xs-12" id="chekc-1" style="display: none;">
+                    <label >日均线</label>
+                    <div>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-1-1" value="5日线高于10日线">5日线高于10日线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-1-2" value="5日线高于20日线">5日线高于20日线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-1-3" value="10日线高于20日线">10日线高于20日线</label></br></br>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-1-4" value="K线在5日线上方">K线在5日线上方</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-1-5" value="K线在10日线上方">K线在10日线上方</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-1-6" value="K线在20日线上方">K线在20日线上方</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-1-7" value="K线在5日线下方">K线在5日线下方</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-1-8" value="K线在10日线下方">K线在10日线下方</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-1-9" value="K线在20日线下方">K线在20日线下方</label></br></br>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-1-10" value="5日线向上穿过10日线">5日线向上穿过10日线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-1-11" value="5日线向上穿过20日线">5日线向上穿过20日线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-1-12" value="10日线向上穿过20日线">10日线向上穿过20日线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-1-13" value="5日线向下穿过10日线">5日线向下穿过10日线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-1-14" value="5日线向下穿过20日线">5日线向下穿过20日线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-1-15" value="10日线向下穿过20日线">10日线向下穿过20日线</label>
+                        <HR>
+                    </div>
+                </div>
+                <div class="form-group  col-xs-12" id="chekc-2" style="display: none;">
+                    <label>交易量</label>
+                    <div>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-2-1" value="交易量翻倍">较前一日翻倍</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-2-2" value="5天以来达到最高">比前5天的平均高50%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-2-3" value="20天以来达到最高">比前20天的平均高50%</label>
+                        <HR>
+                    </div>
+                </div>
+                <div class="form-group  col-xs-12" id="chekc-3" style="display: none;">
+                    <label>MACD</label>
+                    <div>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-3-1" value="MACD金叉">金叉</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-3-2" value="MACD死叉">死叉</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-3-3" value="DIF>DEA">DIF在DEA上</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-3-4" value="DIF<DEA">DIF在DEA下</label>
+                        <HR>
+                    </div>
+                </div>
+                <div class="form-group col-xs-12" id="chekc-4" style="display: none;">
+                    <label>KDJ</label>
+                    <div>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-4-1" value="KDJ金叉">金叉</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-4-2" value="KDJ死叉">死叉</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-4-3" value="D大于80(超买)">D大于80(超买)</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-4-4" value="D小于20(超卖)">D小于20(超卖)</label>
+                        <HR>
+                    </div>
+                </div>
+                <div class="form-group  col-xs-12" id="chekc-5" style="display: none;">
+                    <label>布林线</label>
+                    <div>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-5-1" value="股价向上穿过中轨">股价向上穿过中轨</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-5-2" value="股价向下穿过中轨">股价向下穿过中轨</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-5-3" value="股价在中轨上面">股价在中轨上面</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="chekc-5-4" value="股价在中轨下面">股价在中轨下面</label>
+                        <HR>
+                    </div>
+                </div>
+                <div id="查询按钮" style="display: none;">
+                    <button class='btn btn-w-md btn-round btn-primary'>确认查询</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+    {% if chaxun %}
+    <div class="card">
+        <div class="card-header">
+            <h4>查询结果</h4>
+        </div>
+        <div class="card-actions">查询时间：{{ nowtime }}&ensp;&ensp;</div>
+        <div class="card-body">
+            {% for i in allname %}
+            <span class="label {% cycle 'label-brown' 'label-cyan' 'label-danger' 'label-dark' 'label-info' 'label-primary' 'label-purple' 'label-secondary' 'label-success' 'label-warning' %}">{{ i }}</span>
+            {% endfor %}
+            <hr>
+        {% if jieguo|length > 0%}
+            <div class="table-responsive">
+            <table class="table table-bordered">
+            <thead><th>股票名称</th><th>股票代码</th><th>开盘价</th><th>收盘价</th><th>最高价</th><th>最低价</th><th>交易量</th><th>换手率</th></thead>
+                <tbody>
+                {% for ii in jieguo %}
+                <tr>
+                    <td>{{ ii.code.codename }}</td>
+                    <td>{{ ii.code.code|slice:"3:" }}</td>
+                    <td>{{ ii.open|floatformat:2 }}</td>
+                    <td>{{ ii.close|floatformat:2 }}</td>
+                    <td>{{ ii.high|floatformat:2 }}</td>
+                    <td>{{ ii.low|floatformat:2 }}</td>
+                    <td>{{ ii.volume|floatformat:0 }}</td>
+                    <td>{{ ii.turn|floatformat:3 }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            </div>
+        {% else %}
+            <p>{{ nowtime }}没有满足以上条件的股票</p>
+        {% endif %}
+        </div>
+    {% endif %}
+    </div>
+
+
+
+
+
+    </div>
+
+{% endblock content %}
+
+{% block cutsom_js %}
+<script type="text/javascript" src="{% static 'js/calendar.js' %}"></script>
+<script>
+$(function () {
+    daylist = {{ allday|safe }};
+    alldata = [];
+    for (i=0;i<daylist.length;i++){
+        if(daylist[i]['fields']['isover'] == false){}else {
+            alldata.push({date:daylist[i]['fields']['date'],value:'1'})
+        }
+    };
+    $('#dd').calendar({
+        trigger: '#setdate',
+        zIndex: 999,
+		format: 'yyyy-mm-dd',
+        data:alldata,
+        onClose: function (view, date, data) {
+            if(data==1) {
+                var newtime = date.format("yyyy年mm月dd日");
+                $('#setdate').text(newtime);
+                $("input[name='newtime']").val(newtime);
+            }else {
+                alert('无数据，请选择‘绿点’日期')
+            }
+        }
+    });
+    var gaodu=$('#setdate').position().top;
+    var zonghe = $('#dd').height();
+    var xiaohe = $('#dd').find('.calendar-hd').height();
+    $('#dd').css('top',gaodu+30).height(zonghe+20).find('.calendar-hd').height(xiaohe+10);
+})
+$(function () {
+    $('#header>div').find('input').click(function () {
+        if($(this).prop('checked')){
+            var weizhi=$(this).parent().parent().parent().index();
+            $('#chaxun').show();
+            $('#查询按钮').show();
+            $('.form-group').eq(weizhi).show();
+        }else {
+            var weizhi = $(this).parent().parent().parent().index();
+            $('.form-group').eq(weizhi).hide().find('input').prop('checked', false);
+            if ($('#header>div input:checked').length == 0) {$('#chaxun').hide();$('#查询按钮').hide();}}
+    })
+});
+$(function () {
+    if ($(window).width()<800){
+        $('.table-bordered>thead>tr>th').eq(2).remove();
+        var alllist=$('.table-bordered>tbody>tr');
+        for (i=0;alllist.length>i;i++){$(alllist[i]).find('td').eq(2).remove()};
+        $('.table-bordered>thead>tr>th').eq(4).remove();
+        var alllist=$('.table-bordered>tbody>tr');
+        for (i=0;alllist.length>i;i++){$(alllist[i]).find('td').eq(4).remove()};
+    };
+});
+$(function () {
+    $('.table-bordered>tbody>tr:even').css("background",'rgba(0,0,0,0.03)');
+
+});
+</script>
+
+{% endblock cutsom_js %}
