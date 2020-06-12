@@ -1,24 +1,28 @@
 from django.shortcuts import render,HttpResponse,redirect
-from . import models
+from .models import *
+from login.models import *
 from django.core import serializers
+import datetime
 from django.db.models import F
 import json
 import redis
 # Create your views here.
 def index(request):
-    allday=models.Jiaoyiday.objects.all()
+    allday=Jiaoyiday.objects.all()
     newday=allday.last()
     if newday.isover == False:
         newdayid=newday.id-1
         while newdayid>1:
             try:
-                newday=models.Jiaoyiday.objects.get(id=newdayid)
+                newday=Jiaoyiday.objects.get(id=newdayid)
                 break
             except:
                 newdayid=newdayid-1
     zd={}
     zd['newday']=newday
     zd['allday']=serializers.serialize('json',allday)
+    if request.session.get('is_login',None):
+        zd['username']=request.session.get('username')
     return render(request,'index.html',zd)
 
 
@@ -31,11 +35,14 @@ def chaxun(request):
             all_keys=list(all_keys)[2:]
             zd['chaxun']=1
             zd['jieguo'],zd['allname'] = chulishuju(all_post,all_keys)
-            allday = models.Jiaoyiday.objects.all()
+            zd['jieguo']=zd['jieguo'][:50]
+            allday = Jiaoyiday.objects.all()
             newday = allday.last()
             zd['allday'] = serializers.serialize('json',allday)
             zd['newday'] = newday
             zd['nowtime'] = all_post['newtime']
+            if request.session.get('is_login', None):
+                zd['username'] = request.session.get('username')
             return render(request,'index.html',zd)
         return redirect('/')
     return redirect('/')
@@ -43,25 +50,45 @@ def chaxun(request):
 def shuoming(requeset):
     return render(requeset,'shuoming.html')
 
+def chuchun(request):
+    if request.method=='POST':
+        username=request.session.get('username',None)
+        if username:
+            name=request.POST.get('name',None)
+            celielist=[]
+            celiename=[]
+            for i in request.POST.keys():
+                if i[:4]=='date':
+                    celielist.append(i[5:-1])
+                    celiename.append(request.POST[i])
+            alljg='|'.join(celielist)
+            allname='|'.join(celiename)
+            celie=Celve.objects.get_or_create(clcode=alljg,defaults={'clname':allname,'last_time':datetime.datetime.now()})
+            userbianliang=Alluser.objects.get(name=username)
+            usercelve.objects.create(user=userbianliang,celve=celie[0],clname=name)
+            return HttpResponse(f'\'{name}\'策略保存成功')
+    return HttpResponse('发生错误')
 
 
-kline_list={'chekc-1-1','chekc-1-2','chekc-1-3','chekc-1-4','chekc-1-5','chekc-1-6','chekc-1-7','chekc-1-8','chekc-1-9',
-            'chekc-3-3','chekc-3-4','chekc-4-3','chekc-4-4','chekc-5-1','chekc-5-2','chekc-5-3','chekc-5-4',}
-kline_set={'chekc-1-1':'''.filter(day5__gt=F('day10'))''','chekc-1-2':'''.filter(day5__gt=F('day20'))''','chekc-1-3':'''.filter(day10__gt=F('day20'))''',
-           'chekc-1-4':'''.filter(low__gt=F('day5'))''','chekc-1-5':'''.filter(low__gt=F('day10'))''','chekc-1-6':'''.filter(low__gt=F('day20'))''',
-           'chekc-1-7':'''.filter(high__lt=F('day5'))''','chekc-1-8':'''.filter(high__lt=F('day10'))''','chekc-1-9':'''.filter(high__lt=F('day20'))''',
-           'chekc-3-3':'''.filter(hist__gt=0)''','chekc-3-4':'''.filter(hist__lt=0)''','chekc-4-3':'''.filter(kdjD__gt=80)''','chekc-4-4':'''.filter(kdjD__lt=20)''',
-           'chekc-5-1':'''.filter(close__gt=F('middle')).filter(open__lt=F('middle'))''','chekc-5-2':'''.filter(close__lt=F('middle')).filter(open__gt=F('middle'))''',
-           'chekc-5-3':'''.filter(low__gt=F('middle'))''','chekc-5-4':'''.filter(high__lt=F('middle'))''',
+
+
+kline_list={'1-1','1-2','1-3','1-4','1-5','1-6','1-7','1-8','1-9',
+            '3-3','3-4','4-3','4-4','5-1','5-2','5-3','5-4',}
+kline_set={'1-1':'''.filter(day5__gt=F('day10'))''','1-2':'''.filter(day5__gt=F('day20'))''','1-3':'''.filter(day10__gt=F('day20'))''',
+           '1-4':'''.filter(low__gt=F('day5'))''','1-5':'''.filter(low__gt=F('day10'))''','1-6':'''.filter(low__gt=F('day20'))''',
+           '1-7':'''.filter(high__lt=F('day5'))''','1-8':'''.filter(high__lt=F('day10'))''','1-9':'''.filter(high__lt=F('day20'))''',
+           '3-3':'''.filter(hist__gt=0)''','3-4':'''.filter(hist__lt=0)''','4-3':'''.filter(kdjD__gt=80)''','4-4':'''.filter(kdjD__lt=20)''',
+           '5-1':'''.filter(close__gt=F('middle')).filter(open__lt=F('middle'))''','5-2':'''.filter(close__lt=F('middle')).filter(open__gt=F('middle'))''',
+           '5-3':'''.filter(low__gt=F('middle'))''','5-4':'''.filter(high__lt=F('middle'))''',
            }
 
-jisuan_list={'chekc-1-10','chekc-1-11','chekc-1-12','chekc-1-13','chekc-1-14','chekc-1-15','chekc-2-1','chekc-2-2','chekc-2-3',
-             'chekc-3-1','chekc-3-2','chekc-4-1','chekc-4-2',}
-jisuan_set={'chekc-1-10':'''.filter(day5to10=True)''','chekc-1-11':'''.filter(day5to20=True)''','chekc-1-12':'''.filter(day10to20=True)''',
-            'chekc-1-13':'''.filter(day5to10=False)''','chekc-1-14':'''.filter(day5to20=False)''','chekc-1-15':'''.filter(day10to20=False)''',
-            'chekc-2-1':'''.filter(buynumtwo=True)''','chekc-2-2':'''.filter(buynum5=True)''','chekc-2-3':'''.filter(buynum20=True)''',
-             'chekc-3-1':'''.filter(MACD=True)''','chekc-3-2':'''.filter(MACD=False)''','chekc-4-1':'''.filter(KDJ=True)''',
-            'chekc-4-2':'''.filter(KDJ=False)''',
+jisuan_list={'1-10','1-11','1-12','1-13','1-14','1-15','2-1','2-2','2-3',
+             '3-1','3-2','4-1','4-2',}
+jisuan_set={'1-10':'''.filter(day5to10=True)''','1-11':'''.filter(day5to20=True)''','1-12':'''.filter(day10to20=True)''',
+            '1-13':'''.filter(day5to10=False)''','1-14':'''.filter(day5to20=False)''','1-15':'''.filter(day10to20=False)''',
+            '2-1':'''.filter(buynumtwo=True)''','2-2':'''.filter(buynum5=True)''','2-3':'''.filter(buynum20=True)''',
+             '3-1':'''.filter(MACD=True)''','3-2':'''.filter(MACD=False)''','4-1':'''.filter(KDJ=True)''',
+            '4-2':'''.filter(KDJ=False)''',
             }
 
 
@@ -73,23 +100,23 @@ def chulishuju(all_post,all_keys):
     kline_try = list(all_keys & kline_list)
     jisuan_try = list(all_keys & jisuan_list)
     all_name=[all_post[i] for i in kline_try]+[all_post[i] for i in jisuan_try]
-    kline_jieguo = models.kline.objects.filter(date__date=newtime)
+    kline_jieguo = kline.objects.filter(date__date=newtime)
     if len(kline_try)>0:
         for i in kline_try:
             kline_jieguo=eval('''kline_jieguo'''+kline_set[i])
         if len(jisuan_try)>0:
-            jisuan_jieguo = models.jisuan.objects.filter(date__date=newtime)
+            jisuan_jieguo = jisuan.objects.filter(date__date=newtime)
             for i in jisuan_try:
                 jisuan_jieguo = eval('''jisuan_jieguo''' + jisuan_set[i])
-                jisuan = jisuan_jieguo.values('code')
-                kline_jieguo = kline_jieguo.filter(code__id__in=jisuan)
+            jisuan1 = jisuan_jieguo.values('code')
+            kline_jieguo = kline_jieguo.filter(code__id__in=jisuan1)
         return kline_jieguo,all_name
     elif len(jisuan_try)>0:
-        jisuan_jieguo = models.jisuan.objects.filter(date__date=newtime)
+        jisuan_jieguo = jisuan.objects.filter(date__date=newtime)
         for i in jisuan_try:
             jisuan_jieguo = eval('''jisuan_jieguo''' + jisuan_set[i])
-            jisuan = jisuan_jieguo.values('code')
-            kline_jieguo = kline_jieguo.filter(code__id__in=jisuan)
+        jisuan1 = jisuan_jieguo.values('code')
+        kline_jieguo = kline_jieguo.filter(code__id__in=jisuan1)
         return kline_jieguo, all_name
 
 
@@ -102,26 +129,26 @@ def chulishuju1(all_post,all_keys):
     jisuan_try = list(all_keys & jisuan_list)
     all_name=[all_post[i] for i in kline_try]+[all_post[i] for i in jisuan_try]
     if len(kline_try)>0:
-        kline_jieguo = models.kline.objects.filter(date__date=newtime)
+        kline_jieguo = kline.objects.filter(date__date=newtime)
         for i in kline_try:
             kline_jieguo=eval('''kline_jieguo'''+kline_set[i])
-        kline=kline_jieguo.values('code')
+        kline1=kline_jieguo.values('code')
         if len(jisuan_try)>0:
-            jisuan_jieguo = models.jisuan.objects.filter(date__date=newtime)
+            jisuan_jieguo = jisuan.objects.filter(date__date=newtime)
             for i in jisuan_try:
                 jisuan_jieguo = eval('''jisuan_jieguo''' + jisuan_set[i])
-            jisuan = jisuan_jieguo.values('code')
-            jiaoji=kline.intersection(jisuan)
-            a = models.Gupiaolist.objects.filter(id__in=jiaoji)
+            jisuan1 = jisuan_jieguo.values('code')
+            jiaoji=kline.intersection(jisuan1)
+            a = Gupiaolist.objects.filter(id__in=jiaoji)
             return a,all_name
         else:
-            a = models.Gupiaolist.objects.filter(id__in=kline)
+            a = Gupiaolist.objects.filter(id__in=kline1)
             return a,all_name
     elif len(jisuan_try)>0:
-        jisuan_jieguo = models.jisuan.objects.filter(date__date=newtime)
+        jisuan_jieguo = jisuan.objects.filter(date__date=newtime)
         for i in jisuan_try:
             jisuan_jieguo = eval('''jisuan_jieguo''' + jisuan_set[i])
-        jisuan = jisuan_jieguo.values('code')
-        a = models.Gupiaolist.objects.filter(id__in=jisuan)
+        jisuan1 = jisuan_jieguo.values('code')
+        a = Gupiaolist.objects.filter(id__in=jisuan1)
         return a,all_name
 

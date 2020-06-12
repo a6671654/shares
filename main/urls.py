@@ -19,4 +19,5 @@ urlpatterns = [
     path('',views.index),
     path('chaxun/',views.chaxun),
     path('shuoming/',views.shuoming),
+    path('chuchun/',views.chuchun),
 ]
