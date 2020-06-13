@@ -23,9 +23,14 @@ def index(request):
     zd['allday']=serializers.serialize('json',allday)
     if request.session.get('is_login',None):
         zd['username']=request.session.get('username')
+        zd['celielist']=usercelve.objects.filter(user__name=zd['username'])
     return render(request,'index.html',zd)
 
-
+def clchaxun(request):
+    if request.method == 'POST':
+        print(request.POST)
+        return render(request,'shuoming.html')
+    return redirect('/')
 def chaxun(request):
     if request.method == 'POST':
         zd={}
@@ -47,8 +52,8 @@ def chaxun(request):
         return redirect('/')
     return redirect('/')
 
-def shuoming(requeset):
-    return render(requeset,'shuoming.html')
+def shuoming(request):
+    return render(request,'shuoming.html')
 
 def chuchun(request):
     if request.method=='POST':
@@ -58,7 +63,7 @@ def chuchun(request):
             celielist=[]
             celiename=[]
             for i in request.POST.keys():
-                if i[:4]=='date':
+                if i[:4]=='data':
                     celielist.append(i[5:-1])
                     celiename.append(request.POST[i])
             alljg='|'.join(celielist)
@@ -72,8 +77,7 @@ def chuchun(request):
 
 
 
-kline_list={'1-1','1-2','1-3','1-4','1-5','1-6','1-7','1-8','1-9',
-            '3-3','3-4','4-3','4-4','5-1','5-2','5-3','5-4',}
+kline_list={'1-1','1-2','1-3','1-4','1-5','1-6','1-7','1-8','1-9','3-3','3-4','4-3','4-4','5-1','5-2','5-3','5-4',}
 kline_set={'1-1':'''.filter(day5__gt=F('day10'))''','1-2':'''.filter(day5__gt=F('day20'))''','1-3':'''.filter(day10__gt=F('day20'))''',
            '1-4':'''.filter(low__gt=F('day5'))''','1-5':'''.filter(low__gt=F('day10'))''','1-6':'''.filter(low__gt=F('day20'))''',
            '1-7':'''.filter(high__lt=F('day5'))''','1-8':'''.filter(high__lt=F('day10'))''','1-9':'''.filter(high__lt=F('day20'))''',
@@ -82,8 +86,7 @@ kline_set={'1-1':'''.filter(day5__gt=F('day10'))''','1-2':'''.filter(day5__gt=F(
            '5-3':'''.filter(low__gt=F('middle'))''','5-4':'''.filter(high__lt=F('middle'))''',
            }
 
-jisuan_list={'1-10','1-11','1-12','1-13','1-14','1-15','2-1','2-2','2-3',
-             '3-1','3-2','4-1','4-2',}
+jisuan_list={'1-10','1-11','1-12','1-13','1-14','1-15','2-1','2-2','2-3','3-1','3-2','4-1','4-2',}
 jisuan_set={'1-10':'''.filter(day5to10=True)''','1-11':'''.filter(day5to20=True)''','1-12':'''.filter(day10to20=True)''',
             '1-13':'''.filter(day5to10=False)''','1-14':'''.filter(day5to20=False)''','1-15':'''.filter(day10to20=False)''',
             '2-1':'''.filter(buynumtwo=True)''','2-2':'''.filter(buynum5=True)''','2-3':'''.filter(buynum20=True)''',
@@ -118,37 +121,3 @@ def chulishuju(all_post,all_keys):
         jisuan1 = jisuan_jieguo.values('code')
         kline_jieguo = kline_jieguo.filter(code__id__in=jisuan1)
         return kline_jieguo, all_name
-
-
-def chulishuju1(all_post,all_keys):
-    newtime=all_post['newtime']
-    newtime=newtime.replace('年','-').replace('月','-').replace('日','')
-    all_keys=set(all_keys)
-
-    kline_try = list(all_keys & kline_list)
-    jisuan_try = list(all_keys & jisuan_list)
-    all_name=[all_post[i] for i in kline_try]+[all_post[i] for i in jisuan_try]
-    if len(kline_try)>0:
-        kline_jieguo = kline.objects.filter(date__date=newtime)
-        for i in kline_try:
-            kline_jieguo=eval('''kline_jieguo'''+kline_set[i])
-        kline1=kline_jieguo.values('code')
-        if len(jisuan_try)>0:
-            jisuan_jieguo = jisuan.objects.filter(date__date=newtime)
-            for i in jisuan_try:
-                jisuan_jieguo = eval('''jisuan_jieguo''' + jisuan_set[i])
-            jisuan1 = jisuan_jieguo.values('code')
-            jiaoji=kline.intersection(jisuan1)
-            a = Gupiaolist.objects.filter(id__in=jiaoji)
-            return a,all_name
-        else:
-            a = Gupiaolist.objects.filter(id__in=kline1)
-            return a,all_name
-    elif len(jisuan_try)>0:
-        jisuan_jieguo = jisuan.objects.filter(date__date=newtime)
-        for i in jisuan_try:
-            jisuan_jieguo = eval('''jisuan_jieguo''' + jisuan_set[i])
-        jisuan1 = jisuan_jieguo.values('code')
-        a = Gupiaolist.objects.filter(id__in=jisuan1)
-        return a,all_name
-

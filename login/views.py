@@ -12,7 +12,7 @@ def login(request):
             except:
                 return render(request,'login/login.html',{'msg':'用户不存在'})
             if user.password==password:
-                request.session.set_expiry(3600)
+                request.session.set_expiry(None)
                 request.session['username']=username
                 request.session['is_login']=True
                 user.last_login=datetime.datetime.now()
@@ -29,5 +29,5 @@ def create(request):
 
 
 def logout(request):
-    request.session['is_login']=False
+    request.session.flush()
     return redirect(request.META.get('HTTP_REFERER', '/'))

@@ -35,6 +35,20 @@ ul, ol, li {
         </div>
     </div>
     <div id="dd"></div>
+{#    我的策略部分#}
+    {% if celielist %}{% if celielist|length > 0 %}
+        <div class="card">
+        <div class="card-header">
+            <h4>我的策略</h4>
+        </div>
+        <div class="card-body" id="mycelve">
+            {% for i in celielist %}
+                <button type="button" class="btn {% cycle 'btn-primary' 'btn-brown' 'btn-cyan' 'btn-danger' 'btn-warning'%}" name="{{ i.celve.clcode }}" title="{{ i.celve.clname }}">{{ i.clname }}</button>
+            {% endfor %}
+        </div>
+        </div>
+    {% endif %}{% endif %}
+
     <div class="card" id="chaxun" style="display: none;">
         <div class="card-body">
             <form action="/chaxun/" method="post" class="form-horizontal"  enctype="multipart/form-data">
@@ -321,6 +335,17 @@ return false;
 });
 </script>
 {% endif %}
-
+<script>
+$(function () {
+    $('#mycelve').find('button').click(function () {
+        var clname=this.name;
+        var clcode=this.title;
+        $.post('/clchaxun/',{'clcode':clcode,'clname':clname},function (re) {
+             {#return re;#}
+             document.removeChild(re);
+        });
+        return false;
+    })
+})</script>
 
 {% endblock cutsom_js %}
