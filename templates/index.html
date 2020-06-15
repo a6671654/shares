@@ -26,7 +26,8 @@ ul, ol, li {
             {% endif %}
         </div>
         <div class="card-body" id="header">
-            <div class="col-xs-4 col-md-2 col-sm-3"><p>日线<label class="lyear-switch switch-primary"><input type="checkbox" value="日线"><span></span> </label> </p></div>
+            <div class="col-xs-4 col-md-2 col-sm-3"><p>K线<label class="lyear-switch switch-primary"><input type="checkbox" value="K线"><span></span> </label> </p></div>
+            <div class="col-xs-4 col-md-2 col-sm-3"><p>日均线<label class="lyear-switch switch-primary"><input type="checkbox" value="日线"><span></span> </label> </p></div>
             <div class="col-xs-4 col-md-2 col-sm-3"><p>交易量<label class="lyear-switch switch-primary"><input type="checkbox" id="交易量"><span></span> </label> </p></div>
             <div class="col-xs-4 col-md-2 col-sm-3"><p>MACD<label class="lyear-switch switch-primary"><input type="checkbox" id="MACD"><span></span> </label> </p></div>
             <div class="col-xs-4 col-md-2 col-sm-3"><p>KDJ<label class="lyear-switch switch-primary"><input type="checkbox" id="KDJ"><span></span> </label> </p></div>
@@ -58,6 +59,17 @@ ul, ol, li {
                 {% else %}
                     <input type="hidden" name="newtime" value="{{ newday.date }}">
                 {% endif %}
+                <div class="form-group col-xs-12" id="chekc-6" style="display: none;">
+                    <label >K线</label>
+                    <div>
+                        <label class="checkbox-inline"><input type="checkbox" name="6-1" value="5日线高于10日线">5日线高于10日线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="6-2" value="5日线高于20日线">5日线高于20日线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="6-3" value="10日线高于20日线">10日线高于20日线</label></br></br>
+                        <label class="checkbox-inline"><input type="checkbox" name="6-4" value="K线在5日线上方">K线在5日线上方</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="6-5" value="K线在10日线上方">K线在10日线上方</label>
+                        <HR>
+                    </div>
+                </div>
                 <div class="form-group col-xs-12" id="chekc-1" style="display: none;">
                     <label >日均线</label>
                     <div>
@@ -124,10 +136,10 @@ ul, ol, li {
                     <button id='储存' class='btn btn-w-md btn-round btn-info'>储存策略</button>
                     {% endif %}
                 </div>
-
             </form>
         </div>
     </div>
+    <div id="查询结果">
     {% if chaxun %}
     <div class="card">
         <div class="card-header">
@@ -165,7 +177,7 @@ ul, ol, li {
         </div>
     {% endif %}
     </div>
-
+    </div>
 
 
 
@@ -338,11 +350,12 @@ return false;
 <script>
 $(function () {
     $('#mycelve').find('button').click(function () {
-        var clname=this.name;
-        var clcode=this.title;
-        $.post('/clchaxun/',{'clcode':clcode,'clname':clname},function (re) {
-             {#return re;#}
-             document.removeChild(re);
+        var clcode=this.name;
+        var clname=this.title;
+        var nowtime=$('#setdate').text();
+        $.post('/clchaxun/',{'clcode':clcode,'clname':clname,'nowtime':nowtime, },function (re) {
+            $('#查询结果').html(re);
+            $('.table-bordered>tbody>tr:even').css("background",'rgba(0,0,0,0.03)');
         });
         return false;
     })

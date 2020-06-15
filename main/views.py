@@ -3,6 +3,7 @@ from .models import *
 from login.models import *
 from django.core import serializers
 import datetime
+import time
 from django.db.models import F
 import json
 import redis
@@ -28,9 +29,27 @@ def index(request):
 
 def clchaxun(request):
     if request.method == 'POST':
-        print(request.POST)
-        return render(request,'shuoming.html')
-    return redirect('/')
+        if request.session.get('is_login', None):
+            if request.session.get('last_time',time.time()-4)+2>time.time():
+               return HttpResponse('请勿过于频繁查询')
+            request.session['last_time']=time.time()
+            zd={}
+            clcode=request.POST['clcode']
+            clname=request.POST['clname']
+            all_post={}
+            all_keys=clcode.split('|')
+            clname=clname.split('|')
+            all_post['newtime']=request.POST['nowtime']
+            for i in range(len(clname)):
+                all_post[all_keys[i]]=clname[i]
+            zd['chaxun'] = 1
+            zd['jieguo'],zd['allname'] = chulishuju(all_post,all_keys)
+            zd['jieguo']=zd['jieguo'][:50]
+            zd['nowtime'] = all_post['newtime']
+            return render(request,'jieguo.html',zd)
+    return HttpResponse('登入超时')
+
+
 def chaxun(request):
     if request.method == 'POST':
         zd={}
@@ -48,6 +67,7 @@ def chaxun(request):
             zd['nowtime'] = all_post['newtime']
             if request.session.get('is_login', None):
                 zd['username'] = request.session.get('username')
+                zd['celielist'] = usercelve.objects.filter(user__name=zd['username'])
             return render(request,'index.html',zd)
         return redirect('/')
     return redirect('/')
