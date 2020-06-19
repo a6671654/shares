@@ -143,13 +143,17 @@ for daylist in date_list[1:]:
                                    day20=a['20day'], upper=a['upper'], middle=a['middle'], lower=a['lower'])
                 obj.save()
                 a=open_csv
-                buymean20 = (a['volume'].iloc[-21:-1].mean()) * 1.5
-                buymean5 = (a['volume'].iloc[-6:-1].mean()) * 1.5
+                buymean20 = (a['volume'].iloc[-21:-1].mean())
+                buymean5 = (a['volume'].iloc[-6:-1].mean())
                 jihelist = []
-                if a['volume'].iloc[-1] > buymean20:
+                if a['volume'].iloc[-1] > buymean20*2:
                     jihelist.append('buynum20=True')
-                if a['volume'].iloc[-1] > buymean5:
+                elif a['volume'].iloc[-1] < buymean20*0.5:
+                    jihelist.append('buynum20=False')
+                if a['volume'].iloc[-1] > buymean5*2:
                     jihelist.append('buynum5=True')
+                elif a['volume'].iloc[-1] < buymean5*0.5:
+                    jihelist.append('buynum5=False')
                 if a['hist'].iloc[-1] > 0 and a['hist'].iloc[-2] < 0:
                     jihelist.append('MACD=True')
                 elif a['hist'].iloc[-1] < 0 and a['hist'].iloc[-2] > 0:
@@ -166,8 +170,10 @@ for daylist in date_list[1:]:
                     jihelist.append('day10to20=True')
                 elif a['10day'].iloc[-1] < a['20day'].iloc[-1] and a['10day'].iloc[-2] > a['20day'].iloc[-2]:
                     jihelist.append('day10to20=False')
-                if a['volume'].iloc[-1] > a['volume'].iloc[-1] * 2:
+                if a['volume'].iloc[-1] > a['volume'].iloc[-2] * 2:
                     jihelist.append('buynumtwo=True')
+                elif a['volume'].iloc[-1] < a['volume'].iloc[-2] * 0.5:
+                    jihelist.append('buynumtwo=False')
                 if a['K'].iloc[-1] > a['D'].iloc[-1] and a['K'].iloc[-2] < a['D'].iloc[-2]:
                     jihelist.append('KDJ=True')
                 elif a['K'].iloc[-1] < a['D'].iloc[-1] and a['K'].iloc[-2] > a['D'].iloc[-2]:

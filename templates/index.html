@@ -26,12 +26,13 @@ ul, ol, li {
             {% endif %}
         </div>
         <div class="card-body" id="header">
-            <div class="col-xs-4 col-md-2 col-sm-3"><p>K线<label class="lyear-switch switch-primary"><input type="checkbox" value="K线"><span></span> </label> </p></div>
-            <div class="col-xs-4 col-md-2 col-sm-3"><p>日均线<label class="lyear-switch switch-primary"><input type="checkbox" value="日线"><span></span> </label> </p></div>
+            <div class="col-xs-4 col-md-2 col-sm-3"><p>K线形态<label class="lyear-switch switch-primary"><input type="checkbox" value="K线"><span></span> </label> </p></div>
+            <div class="col-xs-4 col-md-2 col-sm-3"><p>日均线<label class="lyear-switch switch-primary"><input type="checkbox" value="日均线"><span></span> </label> </p></div>
             <div class="col-xs-4 col-md-2 col-sm-3"><p>交易量<label class="lyear-switch switch-primary"><input type="checkbox" id="交易量"><span></span> </label> </p></div>
             <div class="col-xs-4 col-md-2 col-sm-3"><p>MACD<label class="lyear-switch switch-primary"><input type="checkbox" id="MACD"><span></span> </label> </p></div>
             <div class="col-xs-4 col-md-2 col-sm-3"><p>KDJ<label class="lyear-switch switch-primary"><input type="checkbox" id="KDJ"><span></span> </label> </p></div>
             <div class="col-xs-4 col-md-2 col-sm-3"><p>布林线<label class="lyear-switch switch-primary"><input type="checkbox" id="BOLL"><span></span> </label> </p></div>
+            <div class="col-xs-4 col-md-2 col-sm-3"><p>换手率<label class="lyear-switch switch-primary"><input type="checkbox" id="换手率"><span></span> </label> </p></div>
             <p><br/><br/></p>
         </div>
     </div>
@@ -44,7 +45,9 @@ ul, ol, li {
         </div>
         <div class="card-body" id="mycelve">
             {% for i in celielist %}
-                <button type="button" class="btn {% cycle 'btn-primary' 'btn-brown' 'btn-cyan' 'btn-danger' 'btn-warning'%}" name="{{ i.celve.clcode }}" title="{{ i.celve.clname }}">{{ i.clname }}</button>
+                {% if i.shanchu %}
+                <button type="button" class="btn {% cycle 'btn-primary' 'btn-brown' 'btn-cyan' 'btn-danger' 'btn-warning'%}" name="{{ i.celve.clcode }}" title="{{ i.celve.clname }}" value="{{ i.id }}">{{ i.clname }}</button>
+                {% endif %}
             {% endfor %}
         </div>
         </div>
@@ -59,74 +62,153 @@ ul, ol, li {
                 {% else %}
                     <input type="hidden" name="newtime" value="{{ newday.date }}">
                 {% endif %}
-                <div class="form-group col-xs-12" id="chekc-6" style="display: none;">
-                    <label >K线</label>
-                    <div>
-                        <label class="checkbox-inline"><input type="checkbox" name="6-1" value="5日线高于10日线">5日线高于10日线</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="6-2" value="5日线高于20日线">5日线高于20日线</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="6-3" value="10日线高于20日线">10日线高于20日线</label></br></br>
-                        <label class="checkbox-inline"><input type="checkbox" name="6-4" value="K线在5日线上方">K线在5日线上方</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="6-5" value="K线在10日线上方">K线在10日线上方</label>
-                        <HR>
-                    </div>
-                </div>
                 <div class="form-group col-xs-12" id="chekc-1" style="display: none;">
-                    <label >日均线</label>
+                    <h4><strong>K线形态</strong></h4>
                     <div>
-                        <label class="checkbox-inline"><input type="checkbox" name="1-1" value="5日线高于10日线">5日线高于10日线</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="1-2" value="5日线高于20日线">5日线高于20日线</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="1-3" value="10日线高于20日线">10日线高于20日线</label></br></br>
-                        <label class="checkbox-inline"><input type="checkbox" name="1-4" value="K线在5日线上方">K线在5日线上方</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="1-5" value="K线在10日线上方">K线在10日线上方</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="1-6" value="K线在20日线上方">K线在20日线上方</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="1-7" value="K线在5日线下方">K线在5日线下方</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="1-8" value="K线在10日线下方">K线在10日线下方</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="1-9" value="K线在20日线下方">K线在20日线下方</label></br></br>
-                        <label class="checkbox-inline"><input type="checkbox" name="1-10" value="5日线向上穿过10日线">5日线向上穿过10日线</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="1-11" value="5日线向上穿过20日线">5日线向上穿过20日线</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="1-12" value="10日线向上穿过20日线">10日线向上穿过20日线</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="1-13" value="5日线向下穿过10日线">5日线向下穿过10日线</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="1-14" value="5日线向下穿过20日线">5日线向下穿过20日线</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="1-15" value="10日线向下穿过20日线">10日线向下穿过20日线</label>
+                        <label >当天</label></br>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-1" value="当天上涨">上涨</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-2" value="当天下跌">下跌</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-3" value="当天阳线">阳线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-4" value="当天阴线">阴线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-5" value="当天高开">高开</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-6" value="当天低开">低开</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-7" value="当天大阳线">大阳线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-8" value="当天中阳线">中阳线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-9" value="当天小阳线">小阳线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-10" value="当天大阴线">大阴线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-11" value="当天中阴线">中阴线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-12" value="当天小阴线">小阴线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-13" value="当天光头阳线">光头阳线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-14" value="当天光脚阳线">光脚阳线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-15" value="当天光头阴线">光头阴线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-16" value="当天光脚阴线">光脚阴线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-17" value="当天十字星">十字星</label>
+                        </br></br>
+                        <label >前一天</label></br>
+                        <label class="checkbox-inline"><input type="checkbox" name="d1-1-1" value="前一天上涨">上涨</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d1-1-2" value="前一天下跌">下跌</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d1-1-3" value="前一天阳线">阳线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d1-1-4" value="前一天阴线">阴线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d1-1-5" value="前一天高开">高开</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d1-1-6" value="前一天低开">低开</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d1-1-7" value="前一天大阳线">大阳线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d1-1-8" value="前一天中阳线">中阳线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d1-1-9" value="前一天小阳线">小阳线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d1-1-10" value="前一天大阴线">大阴线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d1-1-11" value="前一天中阴线">中阴线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d1-1-12" value="前一天小阴线">小阴线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d1-1-13" value="前一天光头阳线">光头阳线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d1-1-14" value="前一天光脚阳线">光脚阳线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d1-1-15" value="前一天光头阴线">光头阴线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d1-1-16" value="前一天光脚阴线">光脚阴线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d1-1-17" value="前一天十字星">十字星</label>
+                        </br></br>
+                        <label >前两天</label></br>
+                        <label class="checkbox-inline"><input type="checkbox" name="d2-1-1" value="前二天上涨">上涨</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d2-1-2" value="前二天下跌">下跌</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d2-1-3" value="前二天阳线">阳线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d2-1-4" value="前二天阴线">阴线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d2-1-5" value="前二天高开">高开</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d2-1-6" value="前二天低开">低开</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d2-1-7" value="前二天大阳线">大阳线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d2-1-8" value="前二天中阳线">中阳线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d2-1-9" value="前二天小阳线">小阳线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d2-1-10" value="前二天大阴线">大阴线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d2-1-11" value="前二天中阴线">中阴线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d2-1-12" value="前二天小阴线">小阴线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d2-1-13" value="前二天光头阳线">光头阳线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d2-1-14" value="前二天光脚阳线">光脚阳线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d2-1-15" value="前二天光头阴线">光头阴线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d2-1-16" value="前二天光脚阴线">光脚阴线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="d2-1-17" value="前二天十字星">十字星</label>
                         <HR>
                     </div>
                 </div>
-                <div class="form-group  col-xs-12" id="chekc-2" style="display: none;">
-                    <label>交易量</label>
+                <div class="form-group col-xs-12" id="chekc-2" style="display: none;">
+                    <h4><strong>日均线</strong></h4>
                     <div>
-                        <label class="checkbox-inline"><input type="checkbox" name="2-1" value="交易量翻倍">较前一日翻倍</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="2-2" value="比前5天平均值高50%">比前5天的平均高50%</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="2-3" value="比前20天平均值高50%">比前20天的平均高50%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="2-1" value="5日线高于10日线">5日线高于10日线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="2-2" value="5日线高于20日线">5日线高于20日线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="2-3" value="10日线高于20日线">10日线高于20日线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="2-16" value="5日线低于10日线">5日线低于10日线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="2-17" value="5日线低于20日线">5日线低于20日线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="2-18" value="10日线低于20日线">10日线低于20日线</label></br></br>
+                        <label class="checkbox-inline"><input type="checkbox" name="2-4" value="K线在5日线上方">K线在5日线上方</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="2-5" value="K线在10日线上方">K线在10日线上方</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="2-6" value="K线在20日线上方">K线在20日线上方</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="2-7" value="K线在5日线下方">K线在5日线下方</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="2-8" value="K线在10日线下方">K线在10日线下方</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="2-9" value="K线在20日线下方">K线在20日线下方</label></br></br>
+                        <label class="checkbox-inline"><input type="checkbox" name="2-10" value="5日线向上穿过10日线">5日线向上穿过10日线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="2-11" value="5日线向上穿过20日线">5日线向上穿过20日线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="2-12" value="10日线向上穿过20日线">10日线向上穿过20日线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="2-13" value="5日线向下穿过10日线">5日线向下穿过10日线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="2-14" value="5日线向下穿过20日线">5日线向下穿过20日线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="2-15" value="10日线向下穿过20日线">10日线向下穿过20日线</label>
                         <HR>
                     </div>
                 </div>
                 <div class="form-group  col-xs-12" id="chekc-3" style="display: none;">
-                    <label>MACD</label>
+                    <h4><strong>交易量</strong></h4>
                     <div>
-                        <label class="checkbox-inline"><input type="checkbox" name="3-1" value="MACD金叉">金叉</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="3-2" value="MACD死叉">死叉</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="3-3" value="DIF>DEA">DIF在DEA上</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="3-4" value="DIF<DEA">DIF在DEA下</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="3-1" value="交易量翻倍">较前一日翻倍以上</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="3-2" value="交易量一半">较前一日减少一半以上</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="3-3" value="比前5天平均值高一倍">比前5天的平均值高一倍</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="3-4" value="比前5天平均值低一半">比前5天的平均值低一半</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="3-5" value="比前20天平均值高一倍">比前20天的平均值高一倍</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="3-6" value="比前20天平均值低一半">比前20天的平均值低一半</label>
                         <HR>
                     </div>
                 </div>
-                <div class="form-group col-xs-12" id="chekc-4" style="display: none;">
-                    <label>KDJ</label>
+                <div class="form-group  col-xs-12" id="chekc-4" style="display: none;">
+                    <h4><strong>MACD</strong></h4>
                     <div>
-                        <label class="checkbox-inline"><input type="checkbox" name="4-1" value="KDJ金叉">金叉</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="4-2" value="KDJ死叉">死叉</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="4-3" value="D大于80(超买)">D大于80(超买)</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="4-4" value="D小于20(超卖)">D小于20(超卖)</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="4-1" value="MACD金叉">金叉</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="4-2" value="MACD死叉">死叉</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="4-3" value="DIF>DEA">快线高于慢线</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="4-4" value="DIF<DEA">快线低于慢线</label>
                         <HR>
                     </div>
                 </div>
-                <div class="form-group  col-xs-12" id="chekc-5" style="display: none;">
-                    <label>布林线</label>
+                <div class="form-group col-xs-12" id="chekc-5" style="display: none;">
+                    <h4><strong>KDJ</strong></h4>
                     <div>
-                        <label class="checkbox-inline"><input type="checkbox" name="5-1" value="股价向上穿过中轨">股价向上穿过中轨</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="5-2" value="股价向下穿过中轨">股价向下穿过中轨</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="5-3" value="股价在中轨上面">股价在中轨上面</label>
-                        <label class="checkbox-inline"><input type="checkbox" name="5-4" value="股价在中轨下面">股价在中轨下面</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="5-1" value="KDJ金叉">金叉</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="5-2" value="KDJ死叉">死叉</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="5-3" value="D大于80(超买)">D大于80(超买)</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="5-4" value="D小于20(超卖)">D小于20(超卖)</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="5-5" value="D大于50">D大于50</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="5-6" value="D小于50">D小于50</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="5-7" value="K大于J">K大于J</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="5-8" value="J大于K">J大于K</label>
+                        <HR>
+                    </div>
+                </div>
+                <div class="form-group  col-xs-12" id="chekc-6" style="display: none;">
+                    <h4><strong>布林线</strong></h4>
+                    <div>
+                        <label class="checkbox-inline"><input type="checkbox" name="6-1" value="股价向上穿过中轨">股价向上穿过中轨</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="6-2" value="股价向下穿过中轨">股价向下穿过中轨</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="6-3" value="股价在中轨上面">股价在中轨上面</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="6-4" value="股价在中轨下面">股价在中轨下面</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="6-5" value="触及上轨">股价触及上轨</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="6-6" value="触及下轨">股价触及下轨</label>
+                        <HR>
+                    </div>
+                </div>
+                <div class="form-group  col-xs-12" id="chekc-7" style="display: none;">
+                    <h4><strong>换手率</strong></h4>
+                    <div>
+                        <label class="checkbox-inline"><input type="checkbox" name="7-1" value="换手率小于0.5%">小于0.5%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="7-2" value="换手率大于0.5%">大于0.5%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="7-3" value="换手率小于1%">小于1%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="7-4" value="换手率大于1%">大于1%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="7-5" value="换手率小于3%">小于3%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="7-6" value="换手率大于3%">大于3%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="7-7" value="换手率小于7%">小于7%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="7-8" value="换手率大于7%">大于7%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="7-9" value="换手率小于10%">小于10%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="7-10" value="换手率大于10%">大于10%</label>
                         <HR>
                     </div>
                 </div>
@@ -352,8 +434,9 @@ $(function () {
     $('#mycelve').find('button').click(function () {
         var clcode=this.name;
         var clname=this.title;
+        var clid=this.value;
         var nowtime=$('#setdate').text();
-        $.post('/clchaxun/',{'clcode':clcode,'clname':clname,'nowtime':nowtime, },function (re) {
+        $.post('/clchaxun/',{'clcode':clcode,'clname':clname,'nowtime':nowtime,'clid':clid},function (re) {
             $('#查询结果').html(re);
             $('.table-bordered>tbody>tr:even').css("background",'rgba(0,0,0,0.03)');
         });

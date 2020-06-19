@@ -26,6 +26,6 @@ class usercelve(models.Model):
     clname = models.CharField(max_length=256)
     nums = models.IntegerField(default=0)
     last_time = models.DateTimeField(auto_now_add=True)
-    shanchu = models.FloatField(null=True)
+    shanchu = models.NullBooleanField(null=True)
     def __str__(self):
         return self.user.name + ':' + self.clname

@@ -6,12 +6,15 @@ from main import models
 import pandas as pd
 import time
 
+
+
 #导入gupiaolist
 a=pd.read_csv('all.csv')
 for i in range(len(a.index)):
     print(a.iloc[i,1],a.iloc[i,3])
     b=models.Gupiaolist(code=a.iloc[i,1],codename=a.iloc[i,3])
     b.save()
+print('股票列表导入成功')
 #导入近30个交易日jiaoyiday
 a=pd.read_csv('try/sh.600000.csv')
 a=a.tail(30)
@@ -20,7 +23,7 @@ for i in list(a['date']):
     obj= models.Jiaoyiday(date=i,isover=True)
     daorulist.append(obj)
 models.Jiaoyiday.objects.bulk_create(daorulist)
-
+print('交易日导入成功')
 
 #删除不要的股票，需要移动到11文件夹
 name_list=os.listdir('11')
@@ -28,7 +31,7 @@ for i in name_list:
     code1=models.Gupiaolist.objects.get(code=i[:-4])
     print(code1.code,code1.codename)
     code1.delete()
-
+print('已删除不要的股票')
 #导入数据
 
 a=models.Jiaoyiday.objects.all()
@@ -59,7 +62,7 @@ for i in allday:
             pass
 
     models.kline.objects.bulk_create(appendlist)
-
+print('K线部分以导入完成，开始导入最后计算部分')
 a=models.kline.objects.all()
 allnum=len(a)
 jishu=0
@@ -72,13 +75,17 @@ for i in a:
     a['date'] = pd.to_datetime(a['date'])
     b=a[a['date']==pd.Timestamp(nowdate)]
     newindex=(b.index.values)[0]
-    buymean20=(a['volume'].iloc[newindex-20:newindex].mean())*1.5
-    buymean5=(a['volume'].iloc[newindex-5:newindex].mean())*1.5
+    buymean20=(a['volume'].iloc[newindex-20:newindex].mean())
+    buymean5=(a['volume'].iloc[newindex-5:newindex].mean())
     jihelist=[]
-    if a['volume'].iloc[newindex]>buymean20:
+    if a['volume'].iloc[newindex]>buymean20*2:
         jihelist.append('buynum20=True')
-    if a['volume'].iloc[newindex]>buymean5:
+    elif a['volume'].iloc[newindex]<buymean20*0.5:
+        jihelist.append('buynum20=False')
+    if a['volume'].iloc[newindex]>buymean5*2:
         jihelist.append('buynum5=True')
+    elif a['volume'].iloc[newindex]<buymean5*0.5:
+        jihelist.append('buynum5=False')
     if a['hist'].iloc[newindex]>0 and a['hist'].iloc[newindex-1]<0:
         jihelist.append('MACD=True')
     elif a['hist'].iloc[newindex]<0 and a['hist'].iloc[newindex-1]>0:
@@ -95,8 +102,10 @@ for i in a:
         jihelist.append('day10to20=True')
     elif a['10day'].iloc[newindex]<a['20day'].iloc[newindex] and a['10day'].iloc[newindex-1]>a['20day'].iloc[newindex-1]:
         jihelist.append('day10to20=False')
-    if a['volume'].iloc[newindex]>a['volume'].iloc[newindex]*2:
+    if a['volume'].iloc[newindex]>a['volume'].iloc[newindex-1]*2:
         jihelist.append('buynumtwo=True')
+    elif a['volume'].iloc[newindex]<a['volume'].iloc[newindex-1]*0.5:
+        jihelist.append('buynumtwo=False')
     if a['K'].iloc[newindex]>a['D'].iloc[newindex] and a['K'].iloc[newindex-1]<a['D'].iloc[newindex-1]:
         jihelist.append('KDJ=True')
     elif a['K'].iloc[newindex]<a['D'].iloc[newindex] and a['K'].iloc[newindex-1]>a['D'].iloc[newindex-1]:
@@ -109,4 +118,4 @@ for i in a:
         zxnr=zxnr[:-1]
         ojc=eval(f'models.jisuan(code=i.code,date=i.date,{zxnr})')
         ojc.save()
-        print(round((jishu/allnum)*100,4))
+        print(round((jishu/allnum)*100,4),'%')
