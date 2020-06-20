@@ -31,7 +31,7 @@ def clchaxun(request):
     if request.method == 'POST':
         if request.session.get('is_login', None):
             if request.session.get('last_time',time.time()-6)+5>time.time():
-               return HttpResponse('请勿过于频繁查询')
+               return HttpResponse('为保值网站正常运行，每5秒只能查询一次')
             request.session['last_time']=time.time()
             zd={}
             clcode=request.POST['clcode']
@@ -108,7 +108,7 @@ kline_list={'1-1','1-2','1-3','1-4','1-5','1-6','1-7','1-8','1-9','1-10','1-11',
             '2-1','2-2','2-3','2-16','2-17','2-18','2-4','2-5','2-6','2-7','2-8','2-9',
             '4-3','4-4',
             '5-3','5-4','5-5','5-6','5-7','5-8',
-            '6-1','6-2','6-3','6-4','6-5','6-6',
+            '6-1','6-3','6-4','6-5','6-6',
             '7-1','7-2','7-3','7-4','7-5','7-6','7-7','7-8','7-9','7-10'}
 kline_set={'1-1':'''.filter(close__gt=F('preclose'))''','1-2':'''.filter(close__lt=F('preclose'))''','1-3':'''.filter(open__lt=F('close'))''',
             '1-4':'''.filter(open__gt=F('close'))''','1-5':'''.filter(open__gt=F('preclose'))''','1-6':'''.filter(open__lt=F('preclose'))''',
@@ -125,8 +125,8 @@ kline_set={'1-1':'''.filter(close__gt=F('preclose'))''','1-2':'''.filter(close__
             '4-3':'''.filter(hist__gt=0)''','4-4':'''.filter(hist__lt=0)''',
             '5-3':'''.filter(kdjD__gt=80)''','5-4':'''.filter(kdjD__lt=20)''','5-5':'''.filter(kdjD__gt=50)''','5-6':'''.filter(kdjD__lt=50)''',
             '5-7':'''.filter(kdjK__gt=F('kdjJ'))''','5-8':'''.filter(kdjK__lt=F('kdjJ'))''',
-            '6-1':'''.filter(close__gt=F('middle')).filter(open__lt=F('middle'))''','6-2':'''.filter(close__lt=F('middle')).filter(open__gt=F('middle'))''',
-            '6-3':'''.filter(low__gt=F('middle'))''','6-4':'''.filter(high__lt=F('middle'))''','6-5':'''.filter(low__lt=F('upper')).filter(high__gt=F('upper'))''',
+            '6-1':'''.filter(high__gt=F('middle')).filter(low__lt=F('middle'))''','6-3':'''.filter(low__gt=F('middle'))''',
+            '6-4':'''.filter(high__lt=F('middle'))''','6-5':'''.filter(low__lt=F('upper')).filter(high__gt=F('upper'))''',
             '6-6':'''.filter(low__lt=F('lower')).filter(high__gt=F('lower'))''',
             '7-1':'''.filter(turn__lt=0.5)''','7-2':'''.filter(turn__gt=0.5)''','7-3':'''.filter(turn__lt=1)''','7-4':'''.filter(turn__gt=1)''',
             '7-5':'''.filter(turn__lt=3)''','7-6':'''.filter(turn__gt=3)''',
@@ -135,13 +135,16 @@ kline_set={'1-1':'''.filter(close__gt=F('preclose'))''','1-2':'''.filter(close__
 
 
 jisuan_list={'2-10','2-11','2-12','2-13','2-14','2-15',
-             '3-1','3-2','3-3','3-4','3-5','3-6',
+             '3-1','3-2','3-3','3-4','3-5','3-6','3-7','3-8','3-9','3-10','3-11','3-12','3-13','3-14',
              '4-1','4-2',
              '5-1','5-2',}
 jisuan_set={'2-10':'''.filter(day5to10=True)''','2-11':'''.filter(day5to20=True)''','2-12':'''.filter(day10to20=True)''',
             '2-13':'''.filter(day5to10=False)''','2-14':'''.filter(day5to20=False)''','2-15':'''.filter(day10to20=False)''',
             '3-1':'''.filter(buynumtwo=True)''','3-2':'''.filter(buynumtwo=False)''','3-3':'''.filter(buynum5=True)''',
             '3-4':'''.filter(buynum5=False)''','3-5':'''.filter(buynum20=True)''','3-6':'''.filter(buynum20=False)''',
+            '3-7':'''.filter(buynum3up=True)''','3-8':'''.filter(buynum3up=False)''','3-9':'''.filter(buynum5up=True)''',
+            '3-10':'''.filter(buynum5up=False)''','3-11':'''.filter(buynum3chang=True)''','3-12':'''.filter(buynum3chang=False)''',
+            '3-13':'''.filter(buynum5chang=True)''','3-14':'''.filter(buynum5chang=False)''',
             '4-1':'''.filter(MACD=True)''','4-2':'''.filter(MACD=False)''','5-1':'''.filter(KDJ=True)''',
             '5-2':'''.filter(KDJ=False)''',
             }

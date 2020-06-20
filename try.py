@@ -110,6 +110,30 @@ for i in a:
         jihelist.append('KDJ=True')
     elif a['K'].iloc[newindex]<a['D'].iloc[newindex] and a['K'].iloc[newindex-1]>a['D'].iloc[newindex-1]:
         jihelist.append('KDJ=False')
+    if a['volume'].iloc[newindex+1-1] > a['volume'].iloc[newindex+1-2]:
+        if a['volume'].iloc[newindex+1-2] > a['volume'].iloc[newindex+1-3]:
+            if a['volume'].iloc[newindex+1-3] > a['volume'].iloc[newindex+1-4]:
+                jihelist.append('buynum3up=True')
+                if a['volume'].iloc[newindex+1-4] > a['volume'].iloc[newindex+1-5] and a['volume'].iloc[newindex+1-5] > a['volume'].iloc[newindex+1-6]:
+                    jihelist.append('buynum5up=True')
+        else:
+            if a['volume'].iloc[newindex+1-3] < a['volume'].iloc[newindex+1-4] and a['volume'].iloc[newindex+1-4] < a['volume'].iloc[newindex+1-5]:
+                jihelist.append('buynum3chang=False')
+                if a['volume'].iloc[newindex+1-5] < a['volume'].iloc[newindex+1-6] and a['volume'].iloc[newindex+1-6] < a['volume'].iloc[newindex+1-7]:
+                    jihelist.append('buynum5chang=False')
+    else:
+        if a['volume'].iloc[newindex+1-2] < a['volume'].iloc[newindex+1-3]:
+            if a['volume'].iloc[newindex+1-3] < a['volume'].iloc[newindex+1-4]:
+                jihelist.append('buynum3up=False')
+                if a['volume'].iloc[newindex+1-4] < a['volume'].iloc[newindex+1-5] and a['volume'].iloc[newindex+1-5] < a['volume'].iloc[newindex+1-6]:
+                    jihelist.append('buynum5up=False')
+        else:
+            if a['volume'].iloc[newindex+1-3] > a['volume'].iloc[newindex+1-4] and a['volume'].iloc[newindex+1-4] > a['volume'].iloc[newindex+1-5]:
+                jihelist.append('buynum3chang=True')
+                if a['volume'].iloc[newindex+1-5] > a['volume'].iloc[newindex+1-6] and a['volume'].iloc[newindex+1-6] > a['volume'].iloc[newindex+1-7]:
+                    jihelist.append('buynum5chang=True')
+
+
 
     if len(jihelist)>0:
         zxnr=''

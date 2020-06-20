@@ -178,6 +178,28 @@ for daylist in date_list[1:]:
                     jihelist.append('KDJ=True')
                 elif a['K'].iloc[-1] < a['D'].iloc[-1] and a['K'].iloc[-2] > a['D'].iloc[-2]:
                     jihelist.append('KDJ=False')
+                if a['volume'].iloc[-1]>a['volume'].iloc[-2]:
+                    if a['volume'].iloc[-2] > a['volume'].iloc[-3]:
+                        if a['volume'].iloc[-3] > a['volume'].iloc[-4]:
+                            jihelist.append('buynum3up=True')
+                            if a['volume'].iloc[-4] > a['volume'].iloc[-5] and a['volume'].iloc[-5] > a['volume'].iloc[-6]:
+                                jihelist.append('buynum5up=True')
+                    else:
+                        if a['volume'].iloc[-3] < a['volume'].iloc[-4] and  a['volume'].iloc[-4] < a['volume'].iloc[-5]:
+                            jihelist.append('buynum3chang=False')
+                            if a['volume'].iloc[-5] < a['volume'].iloc[-6] and  a['volume'].iloc[-6] < a['volume'].iloc[-7]:
+                                jihelist.append('buynum5chang=False')
+                else:
+                    if a['volume'].iloc[-2] < a['volume'].iloc[-3]:
+                        if a['volume'].iloc[-3] < a['volume'].iloc[-4]:
+                            jihelist.append('buynum3up=False')
+                            if a['volume'].iloc[-4] < a['volume'].iloc[-5] and a['volume'].iloc[-5] < a['volume'].iloc[-6]:
+                                jihelist.append('buynum5up=False')
+                    else:
+                        if a['volume'].iloc[-3] > a['volume'].iloc[-4] and  a['volume'].iloc[-4] > a['volume'].iloc[-5]:
+                            jihelist.append('buynum3chang=True')
+                            if a['volume'].iloc[-5] > a['volume'].iloc[-6] and  a['volume'].iloc[-6] > a['volume'].iloc[-7]:
+                                jihelist.append('buynum5chang=True')
 
                 if len(jihelist) > 0:
                     zxnr = ''

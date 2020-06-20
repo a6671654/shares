@@ -48,5 +48,9 @@ class jisuan(models.Model):
     buynum5 = models.NullBooleanField(null=True)
     buynum20 = models.NullBooleanField(null=True)
     KDJ = models.NullBooleanField(null=True)
+    buynum3up = models.NullBooleanField(null=True)
+    buynum5up = models.NullBooleanField(null=True)
+    buynum3chang = models.NullBooleanField(null=True)
+    buynum5chang = models.NullBooleanField(null=True)
     def __str__(self):
         return str(self.code.code)+str(self.code.codename)
