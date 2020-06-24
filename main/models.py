@@ -52,5 +52,17 @@ class jisuan(models.Model):
     buynum5up = models.NullBooleanField(null=True)
     buynum3chang = models.NullBooleanField(null=True)
     buynum5chang = models.NullBooleanField(null=True)
+    day5keep5 = models.NullBooleanField(null=True)
+    day5keep10 = models.NullBooleanField(null=True)
+    day5keep20 = models.NullBooleanField(null=True)
+    MACD3up = models.NullBooleanField(null=True)
+    MACD5up = models.NullBooleanField(null=True)
+    MACD3chang = models.NullBooleanField(null=True)
+    MACD3chang2 = models.NullBooleanField(null=True)
+    MACD5chang = models.NullBooleanField(null=True)
+    MACD5chang2 = models.NullBooleanField(null=True)
+    BOLL3big = models.NullBooleanField(null=True)
+    BOLL5big = models.NullBooleanField(null=True)
+
     def __str__(self):
         return str(self.code.code)+str(self.code.codename)

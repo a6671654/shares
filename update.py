@@ -60,7 +60,7 @@ def onedateup(codename,open_csv,rs):
 
 
 def goodjob(codename,newday):
-    btime=str(newday-datetime.timedelta(days=200))
+    btime=str(newday-datetime.timedelta(days=250))
     otime=str(newday)
     rs = bs.query_history_k_data_plus(i,"date,open,high,low,close,preclose,volume,amount,turn,tradestatus,pctChg,isST,peTTM,psTTM,pcfNcfTTM,pbMRQ",start_date=btime, end_date=otime).get_data()
     a=rs
@@ -200,6 +200,55 @@ for daylist in date_list[1:]:
                             jihelist.append('buynum3chang=True')
                             if a['volume'].iloc[-5] > a['volume'].iloc[-6] and  a['volume'].iloc[-6] > a['volume'].iloc[-7]:
                                 jihelist.append('buynum5chang=True')
+                if a['5day'].iloc[-5:].max()< a['5day'].iloc[-5:].min()*1.03:
+                    jihelist.append('day5keep5=True')
+                if a['5day'].iloc[-10:].max()< a['5day'].iloc[-10:].min()*1.05:
+                    jihelist.append('day5keep10=True')
+                if a['5day'].iloc[-20:].max()< a['5day'].iloc[-20:].min()*1.1:
+                    jihelist.append('day5keep20=True')
+                if a['hist'].iloc[-1]>a['hist'].iloc[-2]:
+                    if a['hist'].iloc[-2] > a['hist'].iloc[-3]:
+                        if a['hist'].iloc[-3] > a['hist'].iloc[-4]:
+                            jihelist.append('MACD3up=True')
+                            if a['hist'].iloc[-4] > a['hist'].iloc[-5] and a['hist'].iloc[-5] > a['hist'].iloc[-6]:
+                                jihelist.append('MACD5up=True')
+                        else:
+                            if a['hist'].iloc[-4] < a['hist'].iloc[-5] and a['hist'].iloc[-5] < a['hist'].iloc[-6]:
+                                jihelist.append('MACD3chang2=False')
+                                if a['hist'].iloc[-6] < a['hist'].iloc[-7] and a['hist'].iloc[-7] < a['hist'].iloc[-8]:
+                                    jihelist.append('MACD5chang2=False')
+                    else:
+                        if a['hist'].iloc[-3] < a['hist'].iloc[-4] and  a['hist'].iloc[-4] < a['hist'].iloc[-5]:
+                            jihelist.append('MACD3chang=False')
+                            if a['hist'].iloc[-5] < a['hist'].iloc[-6] and  a['hist'].iloc[-6] < a['hist'].iloc[-7]:
+                                jihelist.append('MACD5chang=False')
+                else:
+                    if a['hist'].iloc[-2] < a['hist'].iloc[-3]:
+                        if a['hist'].iloc[-3] < a['hist'].iloc[-4]:
+                            jihelist.append('MACD3up=False')
+                            if a['hist'].iloc[-4] < a['hist'].iloc[-5] and a['hist'].iloc[-5] < a['hist'].iloc[-6]:
+                                jihelist.append('MACD5up=False')
+                        else:
+                            if a['hist'].iloc[-4] > a['hist'].iloc[-5] and a['hist'].iloc[-5] > a['hist'].iloc[-6]:
+                                jihelist.append('MACD3chang2=True')
+                                if a['hist'].iloc[-6] > a['hist'].iloc[-7] and a['hist'].iloc[-7] > a['hist'].iloc[-8]:
+                                    jihelist.append('MACD5chang2=True')
+                    else:
+                        if a['hist'].iloc[-3] > a['hist'].iloc[-4] and  a['hist'].iloc[-4] > a['hist'].iloc[-5]:
+                            jihelist.append('MACD3chang=True')
+                            if a['hist'].iloc[-5] > a['hist'].iloc[-6] and  a['hist'].iloc[-6] > a['hist'].iloc[-7]:
+                                jihelist.append('MACD5chang=True')
+                a['chazhi']=a['upper']-a['lower']
+                if a['chazhi'].iloc[-1]> a['chazhi'].iloc[-2]:
+                    if a['chazhi'].iloc[-2]>a['chazhi'].iloc[-3] and a['chazhi'].iloc[-3]>a['chazhi'].iloc[-4]:
+                        jihelist.append('BOLL3big=True')
+                        if a['chazhi'].iloc[-4]>a['chazhi'].iloc[-5] and a['chazhi'].iloc[-5]>a['chazhi'].iloc[-6]:
+                            jihelist.append('BOLL5big=True')
+                else:
+                    if a['chazhi'].iloc[-2]<a['chazhi'].iloc[-3] and a['chazhi'].iloc[-3]<a['chazhi'].iloc[-4]:
+                        jihelist.append('BOLL3big=False')
+                        if a['chazhi'].iloc[-4]<a['chazhi'].iloc[-5] and a['chazhi'].iloc[-5]<a['chazhi'].iloc[-6]:
+                            jihelist.append('BOLL5big=False')
 
                 if len(jihelist) > 0:
                     zxnr = ''
