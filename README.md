@@ -1,5 +1,5 @@
-# -
-网站地址：http://www.onenicecard.cn/，欢迎访问
+网站地址：http://www.onenicecard.cn/
+欢迎访问
 
 这是一个根据日线选股的网站。
 
