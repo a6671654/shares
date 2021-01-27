@@ -9,7 +9,7 @@ import baostock as bs
 import datetime
 import talib
 import togmail
-
+import tushare as ts
 
 def jsline(a):
     a['DIF'], a['DEA'], a['hist'] = talib.MACD(a['close'], fastperiod=12, slowperiod=26, signalperiod=9)
@@ -54,8 +54,8 @@ def onedateup(codename,open_csv,rs):
     elif len(open_csv.index)<60:
         print(codename,'数据内容过短，建议删除')
         togmail.send('254370469@qq.com','codename数据过短','建议删除对应股票')
-    open_csv.to_csv(f'try/{codename}.csv')
-    open_csv=pd.read_csv(f'try/{codename}.csv',index_col=0)
+    open_csv.to_csv(f'/root/gupiao/try/{codename}.csv')
+    open_csv=pd.read_csv(f'/root/gupiao/try/{codename}.csv',index_col=0)
     return open_csv
 
 
@@ -64,21 +64,32 @@ def goodjob(codename,newday):
     otime=str(newday)
     rs = bs.query_history_k_data_plus(i,"date,open,high,low,close,preclose,volume,amount,turn,tradestatus,pctChg,isST,peTTM,psTTM,pcfNcfTTM,pbMRQ",start_date=btime, end_date=otime).get_data()
     a=rs
-    a.to_csv(f'try/{codename}.csv',index=False)
+    a.to_csv(f'/root/gupiao/try/{codename}.csv',index=False)
     time.sleep(1)
-    a=pd.read_csv(f'try/{codename}.csv',index_col=0)
+    a=pd.read_csv(f'/root/gupiao/try/{codename}.csv',index_col=0)
     a=a[a['tradestatus']==1]
     if len(a.index)>50:
         a=jsline(a)
     else:
         print(codename,'长度不够，不计算数据请从列表中删除')
-    a.to_csv(f'try/{codename}.csv')
+    a.to_csv(f'/root/gupiao/try/{codename}.csv')
     print(codename,'重新下载数据完成')
     return a
 
+def zhibiao(newday):
+    print('正在下载每日指标数据')
+    pro = ts.pro_api()
+    newday=newday.replace('-','')
+    zhibiaodf = pro.daily_basic(ts_code='', trade_date=newday,fields='ts_code,trade_date,volume_ratio,pe,pb,ps,float_share,total_mv,circ_mv')
+    zhibiaodf = zhibiaodf.where(zhibiaodf.notnull(), None)
+    print('每日指标数据下载完成')
+    return zhibiaodf
 
-
-
+def danzhibiao(zhibiaodf,i):
+    tscode = i.split('.')
+    tscode = tscode[1] + '.' + tscode[0].upper()
+    lszhibiao = zhibiaodf[zhibiaodf['ts_code'] == tscode].iloc[0]
+    return lszhibiao
 
 lg = bs.login()
 if datetime.datetime.now().hour >= 17:
@@ -100,6 +111,7 @@ for daylist in date_list[1:]:
     if daylist[1]=='1':
         newday=daylist[0]
         print(newday,'是交易日，开始更新。。。')
+        zhibiaodf=zhibiao(newday)
         c=models.Jiaoyiday(date=newday,isover=False)
         c.save()
         n=0
@@ -119,7 +131,7 @@ for daylist in date_list[1:]:
                 continue
             lastclose = float(rs['preclose'].iloc[0])
             try:
-                open_csv = pd.read_csv(f'try/{i}.csv',index_col=0)###如果没有，重下
+                open_csv = pd.read_csv(f'/root/gupiao/try/{i}.csv',index_col=0)###如果没有，重下
             except:
                 print('检测到没有',i,'数据文件，准备重新创建并覆盖')
                 open_csv=goodjob(i,(datetime.datetime.strptime(newday,'%Y-%m-%d').date()-datetime.timedelta(days=1)))
@@ -135,13 +147,22 @@ for daylist in date_list[1:]:
             #写入数据库
             if len(open_csv.index)>30 and open_csv.index[-1] == newday:
                 a=open_csv.iloc[-1]
-                obj = models.kline(code=ii, date=c, open=a['open'], close=a['close'],
-                                   high=a['high'], low=a['low'], volume=a['volume'],
-                                   turn=a['turn'], preclose=a['preclose'], dif=a['DIF'],
-                                   dea=a['DEA'], hist=a['hist'], kdjK=a['K'], kdjD=a['D'],
-                                   kdjJ=a['J'], day5=a['5day'], day10=a['10day'],
-                                   day20=a['20day'], upper=a['upper'], middle=a['middle'], lower=a['lower'])
-                obj.save()
+                lszhibiao=danzhibiao(zhibiaodf,i)
+                try:
+                    obj = models.Kline(code=ii, date=c, open=a['open'], close=a['close'],
+                                       high=a['high'], low=a['low'], volume=a['volume'],
+                                       turn=a['turn'], preclose=a['preclose'], dif=a['DIF'],
+                                       dea=a['DEA'], hist=a['hist'], kdjK=a['K'], kdjD=a['D'],
+                                       kdjJ=a['J'], day5=a['5day'], day10=a['10day'],
+                                       day20=a['20day'], upper=a['upper'], middle=a['middle'], lower=a['lower'],
+                                       volume_ratio=lszhibiao['volume_ratio'], pe=lszhibiao['pe'], pb=lszhibiao['pb'],
+                                       ps=lszhibiao['ps'], float_share=lszhibiao['float_share'],total_mv=lszhibiao['total_mv'],
+                                       circ_mv=lszhibiao['circ_mv'])
+                    obj.save()
+                except Exception as E:
+                    print(i,newday,'写入报错')
+                    print(E)
+                    continue
                 a=open_csv
                 buymean20 = (a['volume'].iloc[-21:-1].mean())
                 buymean5 = (a['volume'].iloc[-6:-1].mean())
@@ -249,13 +270,68 @@ for daylist in date_list[1:]:
                         jihelist.append('BOLL3big=False')
                         if a['chazhi'].iloc[-4]<a['chazhi'].iloc[-5] and a['chazhi'].iloc[-5]<a['chazhi'].iloc[-6]:
                             jihelist.append('BOLL5big=False')
+                lianyang=0
+                if a['close'].iloc[-1]>a['open'].iloc[-1]:
+                    for mostday in range(1,8):
+                        if a['close'].iloc[-mostday] > a['open'].iloc[-mostday]:
+                            lianyang = mostday
+                        else:
+                            break
+                    # if a['close'].iloc[-2]>a['open'].iloc[-2] and a['close'].iloc[-3]>a['open'].iloc[-3]:
+                    #     lianyang=3
+                    #     if a['close'].iloc[-4]>a['open'].iloc[-4] and a['close'].iloc[-5]>a['open'].iloc[-5]:
+                    #         lianyang=5
+                    #         if a['close'].iloc[-6] > a['open'].iloc[-6] and a['close'].iloc[-7] > a['open'].iloc[-7]:
+                    #             lianyang = 7
+                elif a['close'].iloc[-1]<a['open'].iloc[-1]:
+                    for mostday in range(1,8):
+                        if a['close'].iloc[-mostday] < a['open'].iloc[-mostday]:
+                            lianyang = -mostday
+                        else:
+                            break
+                    # if a['close'].iloc[-2]<a['open'].iloc[-2] and a['close'].iloc[-3]<a['open'].iloc[-3]:
+                    #     lianyang = -3
+                    #     if a['close'].iloc[-4]<a['open'].iloc[-4] and a['close'].iloc[-5]<a['open'].iloc[-5]:
+                    #         lianyang = -5
+                    #         if a['close'].iloc[-6] < a['open'].iloc[-6] and a['close'].iloc[-7] < a['open'].iloc[-7]:
+                    #             lianyang = -7
+                if lianyang != 0:
+                    jihelist.append('yang=lianyang')
+
+                lianzhang = 0
+                if a['close'].iloc[-1] > a['preclose'].iloc[-1]:
+                    for mostday in range(1, 8):
+                        if a['close'].iloc[-mostday] > a['preclose'].iloc[-mostday]:
+                            lianzhang = mostday
+                        else:
+                            break
+                    # if a['close'].iloc[-2] > a['preclose'].iloc[-2] and a['close'].iloc[-3] > a['preclose'].iloc[-3]:
+                    #     lianzhang = 3
+                    #     if a['close'].iloc[-4] > a['preclose'].iloc[-4] and a['close'].iloc[-5] > a['preclose'].iloc[-5]:
+                    #         lianzhang = 5
+                    #         if a['close'].iloc[-6] > a['preclose'].iloc[-6] and a['close'].iloc[-7] > a['preclose'].iloc[-7]:
+                    #             lianzhang = 7
+                elif a['close'].iloc[-1] < a['preclose'].iloc[-1]:
+                    for mostday in range(1, 8):
+                        if a['close'].iloc[-mostday] < a['preclose'].iloc[-mostday]:
+                            lianzhang = -mostday
+                        else:
+                            break
+                    # if a['close'].iloc[-2] < a['preclose'].iloc[-2] and a['close'].iloc[-3] < a['preclose'].iloc[-3]:
+                    #     lianzhang = -3
+                    #     if a['close'].iloc[-4] < a['preclose'].iloc[-4] and a['close'].iloc[-5] < a['preclose'].iloc[-5]:
+                    #         lianzhang = -5
+                    #         if a['close'].iloc[-6] < a['preclose'].iloc[-6] and a['close'].iloc[-7] < a['preclose'].iloc[-7]:
+                    #             lianzhang = -7
+                if lianzhang != 0:
+                    jihelist.append('zhang=lianzhang')
 
                 if len(jihelist) > 0:
                     zxnr = ''
                     for nrlist in jihelist:
                         zxnr = zxnr + nrlist + ','
                     zxnr = zxnr[:-1]
-                    ojc = eval(f'models.jisuan(code=ii,date=c,{zxnr})')
+                    ojc = eval(f'models.Jisuan(dayline=obj,{zxnr})')
                     ojc.save()
             else:
                 print(i,'数据行数不够或者日期不对，跳过')
@@ -276,4 +352,6 @@ for daylist in date_list[1:]:
         else:
             nr='所有股票都成功更新'
         togmail.send('254370469@qq.com',bt,nr)
+        print(bt)
+        time.sleep(100)
 bs.logout()

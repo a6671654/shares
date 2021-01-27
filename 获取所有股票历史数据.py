@@ -22,7 +22,7 @@ for i in a['code']:
         print(i,'已完成:',f'{round(n/num*100,2)}%')
         continue
         
-    rs = bs.query_history_k_data_plus(i,"date,open,high,low,close,preclose,volume,amount,turn,tradestatus,pctChg,isST,peTTM,psTTM,pcfNcfTTM,pbMRQ",start_date='2019-09-01', end_date='2020-06-14',frequency="d", adjustflag="2")
+    rs = bs.query_history_k_data_plus(i,"date,open,high,low,close,preclose,volume,amount,turn,tradestatus,pctChg,isST,peTTM,psTTM,pcfNcfTTM,pbMRQ",start_date='2019-09-01', end_date='2020-08-11',frequency="d", adjustflag="2")
     #### 打印结果集 ####
     data_list = []
     while (rs.error_code == '0') & rs.next():

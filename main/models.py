@@ -5,15 +5,30 @@ from django.db import models
 class Gupiaolist(models.Model):
     code = models.CharField(max_length=9,verbose_name='股票代码')
     codename = models.CharField(max_length=20,verbose_name='股票名称')
+    liangrong = models.NullBooleanField(null=True,default=False)
+    def __str__(self):
+        return str(self.code)
+
+class Gupiaomsg(models.Model):
+    code = models.OneToOneField(Gupiaolist,on_delete=models.CASCADE)
+    tusharecode = models.CharField(max_length=9)
+    dongfangcaifu = models.CharField(max_length=9)
+    listdate = models.DateField(null=True)
+    industry = models.CharField(max_length=50,null=True)
+    holdernum = models.IntegerField(null=True)
+    holderenddate = models.DateField(null=True)
+    holderfloat = models.BigIntegerField(null=True)
+    holdercirc = models.BigIntegerField(null=True)
     def __str__(self):
         return str(self.code)
 
 class Jiaoyiday(models.Model):
     date = models.DateField(auto_now=False, auto_now_add=False)
     isover = models.NullBooleanField(null=True)
+    liangrong = models.NullBooleanField(null=True,default=False)
     def __str__(self):
         return str(self.date)
-class kline(models.Model):
+class Kline(models.Model):
     code = models.ForeignKey(Gupiaolist,on_delete=models.CASCADE)
     date = models.ForeignKey(Jiaoyiday,on_delete=models.CASCADE)
     open = models.FloatField(null=True)
@@ -35,11 +50,17 @@ class kline(models.Model):
     upper = models.FloatField(null=True)
     middle = models.FloatField(null=True)
     lower = models.FloatField(null=True)
+    volume_ratio = models.FloatField(null=True)
+    pe = models.FloatField(null=True)
+    pb = models.FloatField(null=True)
+    ps = models.FloatField(null=True)
+    float_share = models.FloatField(null=True)
+    total_mv = models.FloatField(null=True)
+    circ_mv = models.FloatField(null=True)
     def __str__(self):
         return str(self.code.code)+str(self.code.codename)
-class jisuan(models.Model):
-    code = models.ForeignKey(Gupiaolist,on_delete=models.CASCADE)
-    date = models.ForeignKey(Jiaoyiday,on_delete=models.CASCADE)
+class Jisuan(models.Model):
+    dayline = models.OneToOneField(Kline,on_delete=models.CASCADE)
     day5to10 = models.NullBooleanField(null=True)
     day5to20 = models.NullBooleanField(null=True)
     day10to20 = models.NullBooleanField(null=True)
@@ -63,6 +84,22 @@ class jisuan(models.Model):
     MACD5chang2 = models.NullBooleanField(null=True)
     BOLL3big = models.NullBooleanField(null=True)
     BOLL5big = models.NullBooleanField(null=True)
-
+    yang = models.SmallIntegerField(null=True)
+    zhang = models.SmallIntegerField(null=True)
     def __str__(self):
-        return str(self.code.code)+str(self.code.codename)
+        return str(self.dayline)
+
+class Liangrong(models.Model):
+    dayline = models.OneToOneField(Kline,on_delete=models.CASCADE)
+    rzye = models.BigIntegerField(null=True)
+    rqye = models.BigIntegerField(null=True)
+    rzmre = models.BigIntegerField(null=True)
+    rqyl = models.BigIntegerField(null=True)
+    rzche = models.BigIntegerField(null=True)
+    rqchl = models.BigIntegerField(null=True)
+    rqmcl = models.BigIntegerField(null=True)
+    rzrqye = models.BigIntegerField(null=True)
+    rzjzz = models.SmallIntegerField(null=True)#融资余额连续增长天数
+    rqjjx = models.SmallIntegerField(null=True)#融券连续减小天数
+    rzjmr3 = models.BigIntegerField(null=True)
+    rzjmr5 = models.BigIntegerField(null=True)

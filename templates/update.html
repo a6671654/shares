@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block left %}
+<li class="nav-item"> <a href="/"><i class="mdi mdi-home"></i> 首页</a> </li>
+<li class="nav-item nav-item-has-subnav"> <a href="javascript:void(0)"><i class="mdi mdi-set-center"></i> 链接查询</a>
+    <ul class="nav nav-subnav">
+        <li> <a href="/kuariqi/">跨日期查询</a> </li>
+    </ul>
+</li>
+<li class="nav-item"> <a href="/shuoming/"><i class="mdi mdi-format-align-justify"></i> 使用说明</a> </li>
+<li class="nav-item active"> <a href="/update/"><i class="mdi mdi-update"></i> 更新日志</a> </li>
+{% endblock left %}
+
+{% block pagetitle %}
+<span class="navbar-page-title"> 更新日志 </span>
+{% endblock pagetitle %}
+
+{% block content %}
+    <div class="row">
+    <div class="col-xs-12">
+        <div class="card">
+            <div class="card-body">
+                {% for i in update %}
+                    <div class="divider text-uppercase"><u><strong>{{ i.updateday }}</strong></u></div>
+                    <h3>{{ i.biaoti }}</h3>
+                    {{ i.neirong|safe }}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+{% endblock content %}

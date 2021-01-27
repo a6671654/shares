@@ -20,10 +20,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'p+h^lq6c)ci84i-vd$-1nom3+qru)u@&$ywb&jg744^d$&fzpd'
+SECRET_KEY = ''
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'login',
+    'ckeditor',
 ]
 
 MIDDLEWARE = [
@@ -78,8 +79,13 @@ WSGI_APPLICATION = 'gupiao.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'al',
+        'USER': 'root',
+        'PASSWORD': 'jzt123456',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+        'CONN_MAX_AG': 120,
     }
 }
 

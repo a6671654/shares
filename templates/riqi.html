@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load my_filters %}
+
+{% block left %}
+<li class="nav-item"> <a href="/"><i class="mdi mdi-home"></i> 首页</a> </li>
+<li class="nav-item nav-item-has-subnav open"> <a href="javascript:void(0)"><i class="mdi mdi-set-center"></i> 链接查询</a>
+    <ul class="nav nav-subnav">
+        <li class="active"> <a href="/kuariqi/">跨日期查询</a> </li>
+    </ul>
+</li>
+<li class="nav-item"> <a href="/shuoming/"><i class="mdi mdi-format-align-justify"></i> 使用说明</a> </li>
+<li class="nav-item"> <a href="/update/"><i class="mdi mdi-update"></i> 更新日志</a> </li>
+{% endblock left %}
+
+{% block pagetitle %}
+<span class="navbar-page-title"> 跨日期查询 </span>
+{% endblock pagetitle %}
+
+{% block content %}
+    {% if celielist %}
+    {% else %}
+        <div class="alert  alert-danger" role="alert"><h4><strong>需要登入账号，并且储存策略之后再使用这个功能</strong></h4></div>
+    {% endif %}
+    <div class="row">
+    <div class="col-xs-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>最新数据日期：{{ newday }} &nbsp;&nbsp;&nbsp;最新两融数据日期：{{ rongday }}</h4>
+            </div>
+            <div class="card-body">
+                <form class="form-horizontal" action="/kuariqi/" method="post" enctype="multipart/form-data" id="bigform">
+                <h4>选择条件</h4>
+                <HR>
+                      <div class="form-group">
+                        <div class="col-xs-3">
+                          <select class="form-control" name="日期一" size="1" id="day1">
+                              {% for i in allday %}
+                                  <option value="{{ i }}">{{ i }}</option>
+                              {% endfor %}
+                          </select>
+                            <div class="help-block">日期一</div>
+                        </div>
+                      <div class="col-xs-3">
+                          <select class="form-control" name="条件一" size="1" id="tj1">
+                          <option value="请选择">请选择</option>
+                              {% for i in celielist %}
+                                  <option value="{{ i.id }}">{{ i.clname }}</option>
+                              {% endfor %}
+                          </select>
+                            <div class="help-block">策略一</div>
+                        </div>
+                      <div class="col-xs-3">
+                          <select class="form-control" name="日期二" size="1" id="day2">
+                              <option value="请选择">请选择</option>
+                              {% for i in allday %}
+                                  <option value="{{ i }}">{{ i }}</option>
+                              {% endfor %}
+                          </select>
+                            <div class="help-block">日期二</div>
+                        </div>
+                      <div class="col-xs-3">
+                          <select class="form-control" name="条件二" size="1" id="tj2">
+                              <option value="请选择">请选择</option>
+                              {% for i in celielist %}
+                                  <option value="{{ i.id }}">{{ i.clname }}</option>
+                              {% endfor %}
+                          </select>
+                            <div class="help-block">策略二</div>
+                        </div>
+                      </div>
+                <HR>
+                    <h4>显示数据的日期</h4>
+                <HR>
+                <div class="form-group">
+                        <div class="col-xs-3">
+                          <select class="form-control" name="数据日期" size="1" id="sjday">
+                              {% for i in allday %}
+                                  <option value="{{ i }}">{{ i }}</option>
+                              {% endfor %}
+                          </select>
+                        </div>
+                </div>
+                <HR>
+                <button class='btn btn-w-md btn-round btn-primary'>确认查询</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    </div>
+    <div id="查询结果">
+    <div class="card">
+    <div class="card-header">
+{#        <div class="alert  alert-success"><h4>功能示例</h4></div>#}
+    <h4><strong>功能示例</strong></h4>
+    </div>
+    <div class="card-body">
+        <h5>比如 查询7-31符合策略一，7-30符合策略二的这些股票的8-3号涨跌幅</h5>
+        <br>注意：</br><strong>策略</strong> 是从自己保存的策略中选取的</br><strong>查询内容</strong> 在策略管理中的默认查询内容中修改</h5>
+        <div style="width: 100%"><img style="border: 5px solid dimgrey" src="{% static 'images/riqi.png' %}"></div>
+    </div>
+    </div>
+    </div>
+
+{% endblock content %}
+
+{% block cutsom_js %}
+{% if username %}
+<script src= "{% static "js/jconfirm/jquery-confirm.min.js" %}"></script>
+{#以下是为了jQ使用cookie#}
+<script>
+jQuery(document).ajaxSend(function(event, xhr, settings) {
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    function sameOrigin(url) {
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+            (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+            // or any other URL that isn't scheme relative or absolute i.e relative.
+            !(/^(\/\/|http:|https:).*/.test(url));
+    }
+    function safeMethod(method) {
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    if (!safeMethod(settings.type) && sameOrigin(settings.url)) {
+        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+    }
+});
+
+$.ajaxSetup({
+  data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+});
+</script>
+
+{% endif %}
+
+<script>
+$(function () {
+    $('#bigform').find('button').click(function () {
+        var xuanzhong=$('#bigform').find('option:selected');
+        day1=xuanzhong[0].value;
+        tj1=xuanzhong[1].value;
+        day2=xuanzhong[2].value;
+        tj2=xuanzhong[3].value;
+        xsday=xuanzhong[4].value;
+        $.post('/riqicx/',{'day1':day1,'tj1':tj1,'day2':day2,'tj2':tj2,'xsday':xsday},function (re) {
+            $('#查询结果').html(re);
+            $(document).ready(function(){
+                $('.table').dataTable({
+                    "searching": false,  //是否允许Datatables开启本地搜索
+                    "paging": false,  //是否开启本地分页
+                    "lengthChange": false,  //是否允许用户改变表格每页显示的记录数
+                    "info": false,   //控制是否显示表格左下角的信息
+                    "columnDefs": [{
+                        "targets": 'nosort',  //列的样式名
+                        "orderable": false    //包含上样式名‘nosort’的禁止排序
+                    }],
+                    //跟数组下标一样，第一列从0开始，这里表格初始化时，第四列默认降序
+                    "order": [[1,'asc']]  //asc升序   desc降序  "order": [[ 3, "desc" ]]默认第四列为降序排列
+                });
+            });
+        });
+        return false;
+    })
+})
+</script>
+
+
+<link rel="stylesheet" href="{% static "DataTables-1.10.21/media/css/jquery.dataTables.min.css" %}">
+{#<!-- DataTables -->#}
+<script type="text/javascript" charset="utf8" src="{% static 'DataTables-1.10.21/media/js/jquery.dataTables.js' %}"></script>
+
+{% endblock %}

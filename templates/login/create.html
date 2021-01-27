@@ -1,10 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
+{% load static %}
+<!doctype html>
+<html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<meta charset="UTF-8">
+<link rel="icon" href="{% static 'favicon.ico' %}" type="image/ico">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>登录</title>
+<link rel="stylesheet" type="text/css" href="{% static 'login/css/styles.css' %}">
 </head>
 <body>
-    <h1>还没设计呢</h1>
+<div class="htmleaf-container">
+	<div class="wrapper">
+        <div class="container">
+            {% if msg %}
+			<h2>{{ msg }}</h2>
+            {% else %}
+{#            <p id="biaoti">Welcome</p>#}
+            {% endif %}
+			<form class="form" action="/login/create/" method="post">
+                {%  csrf_token %}
+				<input type="text" name="username" placeholder="用户名">
+				<input type="password" name= 'password1' placeholder="密码">
+				<input type="password" name= 'password2' placeholder="再输入一次密码">
+                <input type="text" name="mobile" placeholder="手机号码(可以不填）">
+				<button type="submit" id="login-button">注册</button>
+			</form>
+		</div>
+
+		<ul class="bg-bubbles">
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+		</ul>
+	</div>
+</div>
+
+<div style="text-align:center;margin:50px 0; font:normal 14px/24px 'MicroSoft YaHei';color:#000000">
+    <h1>注册页面</h1>
+</div>
 </body>
 </html>

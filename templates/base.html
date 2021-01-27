@@ -31,10 +31,21 @@
           <ul class="nav nav-drawer">
               {% block left %}
             <li class="nav-item active"> <a href="/"><i class="mdi mdi-home"></i> 首页</a> </li>
+            <li class="nav-item nav-item-has-subnav"> <a href="javascript:void(0)"><i class="mdi mdi-set-center"></i> 链接查询</a>
+                <ul class="nav nav-subnav">
+                    <li> <a href="/kuariqi/">跨日期查询</a> </li>
+                </ul>
+            </li>
             <li class="nav-item"> <a href="/shuoming/"><i class="mdi mdi-format-align-justify"></i> 使用说明</a> </li>
+            <li class="nav-item"> <a href="/update/"><i class="mdi mdi-update"></i> 更新日志</a> </li>
               {% endblock left %}
           </ul>
         </nav>
+
+        <div class="sidebar-footer">
+            <p>数据在每天收盘后18点左右更新</p>
+            <p>有任何建议或疑问可以加QQ群：1142299216</p>
+        </div>
 
         <div class="sidebar-footer">
           <p class="copyright">Copyright &copy; 2020 by JZT</p>
@@ -68,7 +79,7 @@
                     <span>{{ username }} <span class="caret"></span></span>
               </a>
               <ul class="dropdown-menu dropdown-menu-right">
-                <li> <a href="/"><i class="mdi mdi-account"></i> 无</a> </li>
+                <li> <a href="/celve/"><i class="mdi mdi-account"></i>策略管理</a> </li>
                 <li class="divider"></li>
                 <li> <a href="/login/logout"><i class="mdi mdi-logout-variant"></i> 退出登录</a> </li>
               </ul>

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{% load my_filters %}
 {% block head %}
 <link href="{% static 'css/calendar.css' %}" rel="stylesheet">
 <style type="text/css">
@@ -10,7 +10,7 @@ ul, ol, li {
 	margin: 0;
 }
 </style>
-
+{#弹窗#}
 <link rel="stylesheet" href="{% static 'js/jconfirm/jquery-confirm.min.css' %}">
 {% endblock head %}
 
@@ -33,7 +33,10 @@ ul, ol, li {
             <div class="col-xs-4 col-md-2 col-sm-3"><p>KDJ<label class="lyear-switch switch-primary"><input type="checkbox" id="KDJ"><span></span> </label> </p></div>
             <div class="col-xs-4 col-md-2 col-sm-3"><p>布林线<label class="lyear-switch switch-primary"><input type="checkbox" id="BOLL"><span></span> </label> </p></div>
             <div class="col-xs-4 col-md-2 col-sm-3"><p>换手率<label class="lyear-switch switch-primary"><input type="checkbox" id="换手率"><span></span> </label> </p></div>
-            <p><br/><br/></p>
+            <div class="col-xs-4 col-md-2 col-sm-3"><p>市盈/净/销<label class="lyear-switch switch-primary"><input type="checkbox" id="市盈/净/销"><span></span> </label> </p></div>
+            <div class="col-xs-4 col-md-2 col-sm-3"><p>流通市值<label class="lyear-switch switch-primary"><input type="checkbox" id="市值"><span></span> </label> </p></div>
+            <div class="col-xs-4 col-md-2 col-sm-3"><p>融资融券<label class="lyear-switch switch-primary"><input type="checkbox" id="融资融券"><span></span> </label> </p></div>
+            <p><br/><br/><br/><br/></p>
         </div>
     </div>
     <div id="dd"></div>
@@ -121,6 +124,20 @@ ul, ol, li {
                         <label class="checkbox-inline"><input type="checkbox" name="d2-1-15" value="前二天光头阴线">光头阴线</label>
                         <label class="checkbox-inline"><input type="checkbox" name="d2-1-16" value="前二天光脚阴线">光脚阴线</label>
                         <label class="checkbox-inline"><input type="checkbox" name="d2-1-17" value="前二天十字星">十字星</label>
+                        </br></br>
+                        <label >其他</label></br>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-18" value="3连阳">3连阳</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-19" value="5连阳">5连阳</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-20" value="7连阳">7连阳</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-21" value="3连阴">3连阴</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-22" value="5连阴">5连阴</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-23" value="7连阴">7连阴</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-24" value="3连涨">3连涨</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-25" value="5连涨">5连涨</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-26" value="7连涨">7连涨</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-27" value="3连跌">3连跌</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-28" value="5连跌">5连跌</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="1-29" value="7连跌">7连跌</label>
                         <HR>
                     </div>
                 </div>
@@ -241,6 +258,114 @@ ul, ol, li {
                         <HR>
                     </div>
                 </div>
+                <div class="form-group col-xs-12" id="chekc-8" style="display: none;">
+                    <h4><strong>市（盈、净、销）率</strong></h4>
+                    <div>
+                        <label >市盈率（PE）</label></br>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-1-1" value="市盈率小于5">小于5</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-1-2" value="市盈率大于5">大于5</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-1-3" value="市盈率小于13">小于13</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-1-4" value="市盈率大于13">大于13</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-1-5" value="市盈率小于20">小于20</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-1-6" value="市盈率大于20">大于20</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-1-7" value="市盈率小于28">小于28</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-1-8" value="市盈率大于28">大于28</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-1-9" value="市盈率小于40">小于40</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-1-10" value="市盈率大于40">大于40</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-1-11" value="市盈率小于80">小于80</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-1-12" value="市盈率大于80">大于80</label>
+
+                        </br></br>
+                        <label >市净率（PB）</label></br>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-2-1" value="市净率小于1">小于1</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-2-2" value="市净率大于1">大于1</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-2-3" value="市净率小于1.5">小于1.5</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-2-4" value="市净率大于1.5">大于1.5</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-2-5" value="市净率小于2">小于2</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-2-6" value="市净率大于2">大于2</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-2-7" value="市净率小于3">小于3</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-2-8" value="市净率大于3">大于3</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-2-9" value="市净率小于5">小于5</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-2-10" value="市净率大于5">大于5</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-2-11" value="市净率小于10">小于10</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-2-12" value="市净率大于10">大于10</label>
+                        </br></br>
+                        <label >市销率（PS）</label></br>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-3-1" value="市销率小于0.5">小于0.5</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-3-2" value="市销率大于0.5">大于0.5</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-3-3" value="市销率小于1">小于1</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-3-4" value="市销率大于1">大于1</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-3-5" value="市销率小于2">小于2</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-3-6" value="市销率大于2">大于2</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-3-7" value="市销率小于3">小于3</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-3-8" value="市销率大于3">大于3</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-3-9" value="市销率小于5">小于5</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-3-10" value="市销率大于5">大于5</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-3-11" value="市销率小于10">小于10</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="8-3-12" value="市销率大于10">大于10</label>
+                        </br></br>
+                        <HR>
+                    </div>
+                </div>
+                <div class="form-group  col-xs-12" id="chekc-9" style="display: none;">
+                    <h4><strong>流通市值</strong></h4>
+                    <div>
+                        <label class="checkbox-inline"><input type="checkbox" name="9-1" value="流通市值小于12亿">小于12亿</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="9-2" value="流通市值大于12亿">大于12亿</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="9-3" value="流通市值小于20亿">小于20亿</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="9-4" value="流通市值大于20亿">大于20亿</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="9-5" value="流通市值小于50亿">小于50亿</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="9-6" value="流通市值大于50亿">大于50亿</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="9-7" value="流通市值小于100亿">小于100亿</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="9-8" value="流通市值大于100亿">大于100亿</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="9-9" value="流通市值小于300亿">小于300亿</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="9-10" value="流通市值大于300亿">大于300亿</label>
+                        <HR>
+                    </div>
+                </div>
+                <div class="form-group  col-xs-12" id="chekc-10" style="display: none;">
+                    <h4><strong>融资融券</strong></h4><p>已更新到：{{ rongday.date }}（融资融券数据需要第二天早上9点15之后才会更新，<b>未更新勿选</b>）</p>
+                    <label >融资余额占流通市值比值</label></br>
+                    <div>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-1" value="融资占比小于1%">小于1%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-2" value="融资占比大于1%">大于1%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-3" value="融资占比小于3%">小于3%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-4" value="融资占比大于3%">大于3%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-5" value="融资占比小于5%">小于5%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-6" value="融资占比大于5%">大于5%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-7" value="融资占比小于7%">小于7%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-8" value="融资占比大于7%">大于7%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-9" value="融资占比小于10%">小于10%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-10" value="融资占比大于10%">大于10%</label>
+                        <HR>
+                    </div>
+                    <label >当日融资净增长占流动市值比例(融资买入多于卖出时，多出部分资金占市值的比例）</label></br>
+                    <div>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-11" value="融资净长占比小于0.01%">小于0.01%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-12" value="融资净长占比大于0.01%">大于0.01%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-13" value="融资净长占比小于0.05%">小于0.05%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-14" value="融资净长占比大于0.05%">大于0.05%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-15" value="融资净长占比小于0.1%">小于0.1%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-16" value="融资净长占比大于0.1%">大于0.1%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-17" value="融资净长占比小于0.5%">小于0.5%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-18" value="融资净长占比大于0.5%">大于0.5%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-19" value="融资净长占比小于1%">小于1%</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-20" value="融资净长占比大于1%">大于1%</label>
+                        <HR>
+                    </div>
+                    <label >其他</label></br>
+                    <div>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-21" value="融资连续3日净增长">融资连续3日净增长</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-22" value="融资连续3日净减小">融资连续3日净减小</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-23" value="融资连续5日净增长">融资连续5日净增长</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-24" value="融资连续5日净增长">融资连续5日净减小</label></br>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-25" value="融券连续3日净卖出">融券连续3日净卖出</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-26" value="融券连续3日净买入">融券连续3日净买入</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-27" value="融券连续5日净卖出">融券连续5日净卖出</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="10-28" value="融券连续5日净买入">融券连续5日净买入</label>
+                        <HR>
+                    </div>
+                </div>
                 <div id="查询按钮" style="display: none;">
                     <button class='btn btn-w-md btn-round btn-primary'>确认查询</button>
                     {% if username %}
@@ -256,7 +381,7 @@ ul, ol, li {
         <div class="card-header">
             <h4>查询结果</h4>
         </div>
-        <div class="card-actions">查询时间：{{ nowtime }}&ensp;&ensp;</div>
+        <div class="card-actions">查询时间：{{ nowtime }}&ensp;&ensp;{% if lenjieguo > 100 %}<p>一共{{ lenjieguo }}个结果（只显示100个）</p>{% else %}<p>一共{{ lenjieguo }}个结果</p>{% endif %}</div>
         <div class="card-body">
             {% for i in allname %}
             <span class="label {% cycle 'label-brown' 'label-cyan' 'label-danger' 'label-dark' 'label-info' 'label-primary' 'label-purple' 'label-secondary' 'label-success' 'label-warning' %}">{{ i }}</span>
@@ -264,23 +389,41 @@ ul, ol, li {
             <hr>
         {% if jieguo|length > 0%}
             <div class="table-responsive">
-            <table class="table table-bordered">
-            <thead><th>股票名称</th><th>股票代码</th><th>开盘价</th><th>收盘价</th><th>最高价</th><th>最低价</th><th>交易量</th><th>换手率</th></thead>
+            {% if tablelist %}
+            <table class="table table-bordered stripe">
+            <thead><th>股票名称</th><th>股票代码</th>{% for col in tablelist %}<th>{{ col }}</th>{% endfor %}</thead>
                 <tbody>
                 {% for ii in jieguo %}
                 <tr>
                     <td>{{ ii.code.codename }}</td>
                     <td>{{ ii.code.code|slice:"3:" }}</td>
-                    <td>{{ ii.open|floatformat:2 }}</td>
-                    <td>{{ ii.close|floatformat:2 }}</td>
-                    <td>{{ ii.high|floatformat:2 }}</td>
-                    <td>{{ ii.low|floatformat:2 }}</td>
-                    <td>{{ ii.volume|floatformat:0 }}</td>
-                    <td>{{ ii.turn|floatformat:3 }}</td>
+                    {% for col in tablelist %}
+                    <td>{{ ii|shuchu:col }}</td>
+                    {% endfor %}
                 </tr>
                 {% endfor %}
                 </tbody>
             </table>
+            {% else %}
+            <table class="table table-bordered stripe">
+            <thead><th>股票名称</th><th>股票代码</th><th>收盘价</th><th>交易量(万)</th><th>量比</th><th>换手率</th><th>市盈率</th><th>市值(亿)</th></thead>
+                <tbody>
+                {% for ii in jieguo %}
+                <tr>
+                    <td>{{ ii.code.codename }}</td>
+                    <td>{{ ii.code.code|slice:"3:" }}</td>
+                    <td>{{ ii.close|floatformat:2 }}</td>
+                    <td>{{ ii.volume|yiwan }}</td>
+                    <td>{{ ii.volume_ratio|floatformat:2 }}</td>
+                    <td>{{ ii.turn|floatformat:2 }}%</td>
+                    <td>{{ ii.pe|floatformat:1 }}</td>
+                    <td>{{ ii.circ_mv|yiwan }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+
             </div>
         {% else %}
             <p>{{ nowtime }}没有满足以上条件的股票</p>
@@ -319,7 +462,7 @@ $(function () {
                 $('#setdate').text(newtime);
                 $("input[name='newtime']").val(newtime);
             }else {
-                alert('无数据，请选择‘绿点’日期')
+                $.alert({title: '无数据',content:'请选择‘绿点’日期',buttons: {cancel: {text:'确定',btnClass: 'btn-primary',action:function(){}}}})
             }
         }
     });
@@ -341,20 +484,15 @@ $(function () {
             if ($('#header>div input:checked').length == 0) {$('#chaxun').hide();$('#查询按钮').hide();}}
     })
 });
-$(function () {
-    if ($(window).width()<800){
-        $('.table-bordered>thead>tr>th').eq(2).remove();
-        var alllist=$('.table-bordered>tbody>tr');
-        for (i=0;alllist.length>i;i++){$(alllist[i]).find('td').eq(2).remove()};
-        $('.table-bordered>thead>tr>th').eq(4).remove();
-        var alllist=$('.table-bordered>tbody>tr');
-        for (i=0;alllist.length>i;i++){$(alllist[i]).find('td').eq(4).remove()};
-    };
-});
-$(function () {
-    $('.table-bordered>tbody>tr:even').css("background",'rgba(0,0,0,0.03)');
-
-});
+{#$(function () {#}
+{#    if ($(window).width()<800){#}
+{#        $('.table-bordered>thead>tr>th').eq(3).remove();#}
+{#        var alllist=$('.table-bordered>tbody>tr');#}
+{#        for (i=0;alllist.length>i;i++){$(alllist[i]).find('td').eq(3).remove()};#}
+{#        $('.table-bordered>thead>tr>th').eq(3).remove();#}
+{#        var alllist=$('.table-bordered>tbody>tr');#}
+{#        for (i=0;alllist.length>i;i++){$(alllist[i]).find('td').eq(3).remove()};#}
+{#    };});#}
 </script>
 {% if username %}
 <script src= "{% static "js/jconfirm/jquery-confirm.min.js" %}"></script>
@@ -412,7 +550,6 @@ $('#储存').click(function () {
         for (i=0;i<bianliang.length;i++){
             alllist[$(bianliang[i]).prop('name')]=$(bianliang[i]).prop('value')
         };
-        console.log(alllist);
         var nr='';
         for (i in alllist){nr+=alllist[i]+'</br>'};
 
@@ -467,10 +604,47 @@ $(function () {
         var nowtime=$('#setdate').text();
         $.post('/clchaxun/',{'clcode':clcode,'clname':clname,'nowtime':nowtime,'clid':clid},function (re) {
             $('#查询结果').html(re);
-            $('.table-bordered>tbody>tr:even').css("background",'rgba(0,0,0,0.03)');
+            $(document).ready(function(){
+                $('.table').dataTable({
+                    "searching": false,  //是否允许Datatables开启本地搜索
+                    "paging": false,  //是否开启本地分页
+                    "lengthChange": false,  //是否允许用户改变表格每页显示的记录数
+                    "info": false,   //控制是否显示表格左下角的信息
+                    "columnDefs": [{
+                        "targets": 'nosort',  //列的样式名
+                        "orderable": false    //包含上样式名‘nosort’的禁止排序
+                    }],
+                    //跟数组下标一样，第一列从0开始，这里表格初始化时，第四列默认降序
+                    "order": [[1,'asc']]  //asc升序   desc降序  "order": [[ 3, "desc" ]]默认第四列为降序排列
+                });
+            });
         });
         return false;
     })
-})</script>
+})
+</script>
 
+{#<!-- DataTables CSS -->#}
+<link rel="stylesheet" href="{% static "DataTables-1.10.21/media/css/jquery.dataTables.min.css" %}">
+{#<!-- DataTables -->#}
+<script type="text/javascript" charset="utf8" src="{% static 'DataTables-1.10.21/media/js/jquery.dataTables.js' %}"></script>
+
+
+
+<script>
+$(document).ready(function(){
+    $('.table').dataTable({
+        "searching": false,  //是否允许Datatables开启本地搜索
+        "paging": false,  //是否开启本地分页
+        "lengthChange": false,  //是否允许用户改变表格每页显示的记录数
+        "info": false,   //控制是否显示表格左下角的信息
+        "columnDefs": [{
+            "targets": 'nosort',  //列的样式名
+            "orderable": false    //包含上样式名‘nosort’的禁止排序
+        }],
+        //跟数组下标一样，第一列从0开始，这里表格初始化时，第四列默认降序
+        "order": [[1,'asc']]  //asc升序   desc降序  "order": [[ 3, "desc" ]]默认第四列为降序排列
+    });
+});
+</script>
 {% endblock cutsom_js %}

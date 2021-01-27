@@ -5,8 +5,7 @@ django.setup()
 from main import models
 import pandas as pd
 import time
-
-
+import tushare as ts
 
 #导入gupiaolist
 a=pd.read_csv('all.csv')
@@ -34,6 +33,8 @@ for i in name_list:
 print('已删除不要的股票')
 #导入数据
 
+pro = ts.pro_api()
+
 a=models.Jiaoyiday.objects.all()
 allday=[i.date for i in a]
 a=models.Gupiaolist.objects.all()
@@ -41,29 +42,40 @@ allcode=[ i.code for i in a ]
 for i in allday:
     dayobject=models.Jiaoyiday.objects.get(date=i)
     print(dayobject.date)
+    zhibiaotime=str(dayobject.date).replace('-','')
     appendlist=[]
+    zhibiaodf = pro.daily_basic(ts_code='', trade_date=zhibiaotime,fields='ts_code,trade_date,volume_ratio,pe,pb,ps,float_share,total_mv,circ_mv')
+    zhibiaodf = zhibiaodf.where(zhibiaodf.notnull(), None)
     for ii in allcode:
         codeobject=models.Gupiaolist.objects.get(code=ii)
+        tscode=codeobject.code
+        tscode=tscode.split('.')
+        tscode=tscode[1]+'.'+tscode[0].upper()
         a=pd.read_csv(f'try/{ii}.csv')
         a['date']=pd.to_datetime(a['date'])
-
         try:
+            lszhibiao = zhibiaodf[zhibiaodf['ts_code'] == tscode].iloc[0]
             a=a[a['date']==pd.Timestamp(i)].iloc[0]
-            obj=models.kline(code=codeobject,date=dayobject,open=a['open'],close=a['close'],
+            obj=models.Kline(code=codeobject,date=dayobject,open=a['open'],close=a['close'],
                              high=a['high'],low=a['low'],volume=a['volume'],
                              turn=a['turn'],preclose=a['preclose'],dif=a['DIF'],
                              dea=a['DEA'],hist=a['hist'],kdjK=a['K'],kdjD=a['D'],
                              kdjJ=a['J'],day5=a['5day'],day10=a['10day'],
-                             day20=a['20day'],upper=a['upper'],middle=a['middle'],lower=a['lower'])
+                             day20=a['20day'],upper=a['upper'],middle=a['middle'],lower=a['lower'],
+                             volume_ratio=lszhibiao['volume_ratio'],pe=lszhibiao['pe'],pb=lszhibiao['pb'],
+                             ps=lszhibiao['ps'],float_share=lszhibiao['float_share'],total_mv=lszhibiao['total_mv'],
+                             circ_mv=lszhibiao['circ_mv'])
+            # obj.save()
             appendlist.append(obj)
         except Exception as E:
-            print(ii)
+            print(ii,'报错')
             print(E)
             pass
-
-    models.kline.objects.bulk_create(appendlist)
+    models.Kline.objects.bulk_create(appendlist)
+    time.sleep(10)
 print('K线部分以导入完成，开始导入最后计算部分')
-allkline=models.kline.objects.all()
+
+allkline=models.Kline.objects.all()
 allnum=len(allkline)
 jishu=0
 print(allnum)
@@ -183,12 +195,64 @@ for i in allkline:
             if a['chazhi'].iloc[newindex+1-4]<a['chazhi'].iloc[newindex+1-5] and a['chazhi'].iloc[newindex+1-5]<a['chazhi'].iloc[newindex+1-6]:
                 jihelist.append('BOLL5big=False')
 
+    lianyang=0
+    if a['close'].iloc[newindex+1-1]>a['open'].iloc[newindex+1-1]:
+        for mostday in range(1,8):
+            if a['close'].iloc[newindex+1-mostday]>a['open'].iloc[newindex+1-mostday]:
+                lianyang=mostday
+            else:
+                break
+        # if a['close'].iloc[newindex+1-2]>a['open'].iloc[newindex+1-2] and a['close'].iloc[newindex+1-3]>a['open'].iloc[newindex+1-3]:
+        #     lianyang=3
+        #     if a['close'].iloc[newindex+1-4]>a['open'].iloc[newindex+1-4] and a['close'].iloc[newindex+1-5]>a['open'].iloc[newindex+1-5]:
+        #         lianyang=5
+        #         if a['close'].iloc[newindex+1-6] > a['open'].iloc[newindex+1-6] and a['close'].iloc[newindex+1-7] > a['open'].iloc[newindex+1-7]:
+        #             lianyang = 7
+    elif a['close'].iloc[newindex+1-1]<a['open'].iloc[newindex+1-1]:
+        for mostday in range(1,8):
+            if a['close'].iloc[newindex+1-mostday]<a['open'].iloc[newindex+1-mostday]:
+                lianyang=-mostday
+            else:
+                break
+        # if a['close'].iloc[newindex+1-2]<a['open'].iloc[newindex+1-2] and a['close'].iloc[newindex+1-3]<a['open'].iloc[newindex+1-3]:
+        #     lianyang = -3
+        #     if a['close'].iloc[newindex+1-4]<a['open'].iloc[newindex+1-4] and a['close'].iloc[newindex+1-5]<a['open'].iloc[newindex+1-5]:
+        #         lianyang = -5
+        #         if a['close'].iloc[newindex+1-6] < a['open'].iloc[newindex+1-6] and a['close'].iloc[newindex+1-7] < a['open'].iloc[newindex+1-7]:
+        #             lianyang = -7
+    if lianyang != 0:
+        jihelist.append('yang=lianyang')
+
+    lianzhang = 0
+    if a['close'].iloc[newindex+1-1] > a['preclose'].iloc[newindex+1-1]:
+        for mostday in range(1, 8):
+            if a['close'].iloc[newindex + 1 - mostday] > a['preclose'].iloc[newindex + 1 - mostday]:
+                lianzhang = mostday
+
+        # if a['close'].iloc[newindex+1-2] > a['preclose'].iloc[newindex+1-2] and a['close'].iloc[newindex+1-3] > a['preclose'].iloc[newindex+1-3]:
+        #     lianzhang = 3
+        #     if a['close'].iloc[newindex+1-4] > a['preclose'].iloc[newindex+1-4] and a['close'].iloc[newindex+1-5] > a['preclose'].iloc[newindex+1-5]:
+        #         lianzhang = 5
+        #         if a['close'].iloc[newindex+1-6] > a['preclose'].iloc[newindex+1-6] and a['close'].iloc[newindex+1-7] > a['preclose'].iloc[newindex+1-7]:
+        #             lianzhang = 7
+    elif a['close'].iloc[newindex+1-1] < a['preclose'].iloc[newindex+1-1]:
+        for mostday in range(1, 8):
+            if a['close'].iloc[newindex + 1 - mostday] < a['preclose'].iloc[newindex + 1 - mostday]:
+                lianzhang = -mostday
+        # if a['close'].iloc[newindex+1-2] < a['preclose'].iloc[newindex+1-2] and a['close'].iloc[newindex+1-3] < a['preclose'].iloc[newindex+1-3]:
+        #     lianzhang = -3
+        #     if a['close'].iloc[newindex+1-4] < a['preclose'].iloc[newindex+1-4] and a['close'].iloc[newindex+1-5] < a['preclose'].iloc[newindex+1-5]:
+        #         lianzhang = -5
+        #         if a['close'].iloc[newindex+1-6] < a['preclose'].iloc[newindex+1-6] and a['close'].iloc[newindex+1-7] < a['preclose'].iloc[newindex+1-7]:
+        #             lianzhang = -7
+    if lianzhang != 0:
+        jihelist.append('zhang=lianzhang')
 
     if len(jihelist)>0:
         zxnr=''
         for ii in jihelist:
             zxnr=zxnr+ii+','
         zxnr=zxnr[:-1]
-        ojc=eval(f'models.jisuan(code=i.code,date=i.date,{zxnr})')
+        ojc=eval(f'models.Jisuan(dayline=i,{zxnr})')
         ojc.save()
         print(round((jishu/allnum)*100,4),'%')

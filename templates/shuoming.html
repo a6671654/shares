@@ -4,7 +4,13 @@
 
 {% block left %}
 <li class="nav-item"> <a href="/"><i class="mdi mdi-home"></i> 首页</a> </li>
+<li class="nav-item nav-item-has-subnav"> <a href="javascript:void(0)"><i class="mdi mdi-set-center"></i> 链接查询</a>
+    <ul class="nav nav-subnav">
+        <li> <a href="/kuariqi/">跨日期查询</a> </li>
+    </ul>
+</li>
 <li class="nav-item active"> <a href="/shuoming/"><i class="mdi mdi-format-align-justify"></i> 使用说明</a> </li>
+<li class="nav-item"> <a href="/update/"><i class="mdi mdi-update"></i> 更新日志</a> </li>
 {% endblock left %}
 
 {% block pagetitle %}
@@ -15,7 +21,7 @@
     <div class="row">
     <div class="col-sm-4 col-xs-12">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header bg-cyan">
                 <h4>基本流程</h4>
             </div>
             <div class="card-body">
@@ -27,10 +33,36 @@
             </ul>
             </div>
         </div>
+        <div class="card">
+        <div class="card-header bg-cyan">
+            <h4>手机端和PC端</h4>
+        </div>
+        <div class="card-body">
+        <ul class="list-unstyled">
+            <li>只有简单的适配了手机端，体验并不好</li>
+            <li>由于手机宽度显示，不显示开盘价和最低价</li>
+        </ul>
+        </div>
+        </div>
+        <div class="card">
+        <div class="card-header bg-cyan">
+            <h4>选择查询数据</h4>
+        </div>
+        <div class="card-body">
+        <ul class="list-unstyled">
+            <li>在登入账号之后，策略管理页面点击进入</li>
+            <div style="width: 100%"><img src="{% static 'images/shuju1.jpg' %}"></div>
+            <li>选择数据</li>
+            <div style="width: 100%"><img src="{% static 'images/shuju.png' %}"></div>
+            <li>以后每次查询都会显示对应的数据</li>
+            <div style="width: 100%"><img src="{% static 'images/shuju2.jpg' %}"></div>
+        </ul>
+        </div>
+        </div>
     </div>
     <div class="col-sm-4 col-xs-12">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header bg-cyan">
                 <h4>历史数据查询说明</h4>
             </div>
             <div class="card-body">
@@ -42,33 +74,39 @@
             </ul>
             </div>
         </div>
+        <div class="card">
+            <div class="card-header bg-cyan">
+                <h4>策略修改与删除</h4>
+            </div>
+            <div class="card-body">
+            <ul class="list-unstyled">
+                <li>如图所示</li>
+                <li>可以选择删除策略或者修改名称</li>
+                <div style="width: 100%"><img src="{% static 'images/celve1.png' %}"></div>
+            </ul>
+            </div>
+        </div>
     </div>
     <div class="col-sm-4 col-xs-12">
     <div class="card">
-        <div class="card-header">
-            <h4>手机端和PC端</h4>
+        <div class="card-header bg-cyan">
+            <h4>策略储存及查询</h4>
         </div>
         <div class="card-body">
         <ul class="list-unstyled">
-            <li>只有简单的适配了手机端，体验并不好</li>
-            <li>由于手机宽度显示，不显示开盘价和最低价</li>
+            <li>1.登入账号</li>
+            <li>2.展开之后，会出现“储存策略”按钮</li>
+            <li>3.选取策略，按储存</li>
+            <div style="width: 100%"><img src="{% static 'images/chucun1.jpg' %}"></div>
+            <li>4.输入这个策略的名称，以方便区分</li>
+            <div style="width: 100%"><img src="{% static 'images/chucun2.jpg' %}"></div>
+            <li>5.点击即可直接查询</li>
+            <div style="width: 100%"><img src="{% static 'images/chucun3.jpg' %}"></div>
         </ul>
         </div>
     </div>
     </div>
     </div>
-    <div class="row">
-    <div class="col-sm-4 col-xs-12">
-    <div class="card">
-        <div class="card-header">
-            <h4>账号注册登入</h4>
-        </div>
-        <div class="card-body">
-        <ul class="list-unstyled">
-            <li>只是占个位置，还没想好开发什么功能</li>
-        </ul>
-        </div>
     </div>
-    </div>
-    </div>
+
 {% endblock content %}

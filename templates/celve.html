@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'js/jconfirm/jquery-confirm.min.css' %}">
+{% endblock head %}
+{% block pagetitle %}
+<span class="navbar-page-title"> 策略管理 </span>
+{% endblock pagetitle %}
+
+{% block content %}
+    <div class="row">
+    <div class="card">
+        <div class="card-header">
+            <h4>默认查询内容</h4>
+        </div>
+        <div class="card-body">
+            {% if moren and moren.first.xianshi %}
+                <p><a href="javascript:void(0)" id="neirong">{{ moren.first.xianshi }}</a></p>
+            {% else %}
+                <p><a href="javascript:void(0)" id="neirong">收盘价|交易量|量比|换手率|市盈率|市值</a></p>
+            {% endif %}
+        </div>
+    </div>
+    </div>
+    <div class="row">
+        <div class="card">
+            <div class="card-header">
+                <h4>我的策略</h4>
+            </div>
+            <div class="card-body">
+            {% if allcelve %}
+{#            <div class="table-responsive">#}
+                <table class="table table-bordered" id="biaoge">
+                    <thead>
+                    <tr>
+                        <th>策略名称</th>
+                        <th>策略内容</th>
+                        <th>查询内容</th>
+                        <th>修改名称</th>
+                        <th>删除策略</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for i in allcelve %}
+                        <tr>
+                        <td>{{ i.clname }}</td>
+                        <td>{{ i.celve.clname }}</td>
+                        <td>{{ i.xianshi|default:'默认' }}</td>
+                        <td><button class="btn btn-primary" value="{{ i.id }}" name="{{ i.clname }}"><i class="mdi mdi-auto-fix"></i></button></td>
+                        <td><button class="btn btn-danger" value="{{ i.id }}" name="{{ i.clname }}"><i class="mdi mdi-close"></i></button></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+
+                </table>
+{#            </div>#}
+                {% else %}
+                    </br>
+                    <div class="alert  alert-danger" role="alert"><h4><strong>暂无策略，请在首页储存策略后进入此界面</strong></h4></div>
+                    <div style="width: 100%"><img src="{% static 'images/chucun1.jpg' %}"></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block cutsom_js %}
+
+<script>
+$(function () {
+    $('.table-bordered>tbody>tr:even').css("background",'rgba(0,0,0,0.03)');
+});
+</script>
+{% if username %}
+<script src="{% static "js/jconfirm/jquery-confirm.min.js" %}"></script>
+<script>
+jQuery(document).ajaxSend(function(event, xhr, settings) {
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    function sameOrigin(url) {
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+            (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+            // or any other URL that isn't scheme relative or absolute i.e relative.
+            !(/^(\/\/|http:|https:).*/.test(url));
+    }
+    function safeMethod(method) {
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    if (!safeMethod(settings.type) && sameOrigin(settings.url)) {
+        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+    }
+});
+
+$.ajaxSetup({
+  data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+});
+
+$(':button').click(function () {
+    if ($(this).attr('class') == "btn btn-primary") {
+        caozuo = 'xiugai';
+        celveid = this.value;
+        celvename = this.name;
+
+        $.confirm({
+            title: '修改名称',
+            content: '' +
+                '<form action="" class="formName">' +
+                '<div class="form-group">' +
+                '<label>' + '旧名称：' + celvename + '</label>' +
+                '<input type="text" placeholder="请输入策略的名称" class="name form-control" required />' +
+                '</div>' +
+                '</form>',
+            buttons: {
+                formSubmit: {
+                    text: '提交',
+                    btnClass: 'btn-primary',
+                    action: function () {
+                        var name = this.$content.find('.name').val();
+                        if (!name) {
+                            $.alert('请输入名称');
+                            return false;
+                        }
+                        ;
+                        $.post('/celve/', {'caozuo': caozuo, 'celveid': celveid, 'name': name}, function (fanhui) {
+                            $.alert({
+                                title: '',
+                                content: fanhui,
+                                buttons: {
+                                    cancel: {
+                                        text: '确定', btnClass: 'btn-primary', action: function () {
+                                            location.reload()
+                                        }
+                                    }
+                                }
+                            })
+                        })
+
+                    }
+                },
+                cancel: {
+                    text: '取消'
+                },
+            },
+            onContentReady: function () {
+                var jc = this;
+                this.$content.find('form').on('submit', function (e) {
+                    e.preventDefault();
+                    jc.$$formSubmit.trigger('click');
+                });
+            }
+        });
+    }
+    ;
+    if ($(this).attr('class') == "btn btn-danger") {
+        caozuo = 'shanchu';
+        celveid = this.value;
+        celvename = this.name;
+        $.alert({
+            title: '是否确认删除？',
+            content: '<p>策略名称：' + celvename + '</p>',
+            buttons: {
+                confirm: {
+                    text: '确认',
+                    btnClass: 'btn-primary',
+                    action: function () {
+                        $.post('/celve/', {'caozuo': caozuo, 'celveid': celveid}, function (re) {
+                            $.alert({
+                                title: re, content: '', buttons: {
+                                    confirm: {
+                                        text: '确认', btnClass: 'btn-primary', action: function () {
+                                            window.location.reload();
+                                        }
+                                    }
+                                }
+                            });
+                        });
+                    }
+                },
+
+                cancel: {
+                    text: '取消',
+                    action: function () {
+                        return;
+                    }
+                }
+            }
+        });
+    }
+    ;
+});
+
+{#'<p>{% for i in allshuju %}{{ i.name }}<br>{% endfor %}</p>',#}
+$('#neirong').click(function () {
+        var nr='';
+        $.confirm({
+            title: '最多选取六个数据',
+            content: '<form action="/" method="post" class="form-horizontal"  enctype="multipart/form-data"><div class="form-group col-xs-12" id="chekc-1">'
+                {% for i in allshuju %}+'<label class="checkbox-inline"><input type="checkbox" name="{{ i.id }}" value="{{ i.name }}">{{ i.name }}</label>'{% endfor %}+'</form>',
+            buttons: {
+                formSubmit: {
+                    text: '提交',
+                    btnClass: 'btn-blue',
+                    action: function () {
+                        lsobj=$('input:checked')
+                        if(lsobj.length>6){$.alert({
+                                title: '不要超出6个', content: '', buttons: {
+                                    confirm: {
+                                        text: '确认', btnClass: 'btn-blue', action: function () {
+                                            }}}})}else {
+                            zd={};
+                            for(i=0;i<lsobj.length;i++){zd[lsobj[i].name]=lsobj[i].value;};
+                            $.post('/celve/', {'caozuo': 'moren', 'data': eval(zd)}, function (re) {
+                                $.alert({
+                                    title: re, content: '', buttons: {
+                                        confirm: {
+                                            text: '确认', btnClass: 'btn-primary', action: function () {
+                                                window.location.reload();
+                                            }
+                                        }
+                                    }
+                                });
+                            });
+
+                        }
+                    }
+                },
+                cancel: {
+                    text: '取消'
+                },
+            },
+            onContentReady: function () {
+                var jc = this;
+                this.$content.find('form').on('submit', function (e) {
+                    e.preventDefault();
+                    jc.$$formSubmit.trigger('click');
+                });
+            }
+        });
+return false;
+});
+
+
+
+</script>
+
+{% endif %}
+{% endblock cutsom_js %}

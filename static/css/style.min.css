@@ -2615,6 +2615,7 @@ dd, dt {
     bottom: 0;
     width: 100%;
     height: 96px;
+    /*height: 160px;*/
     border-top: 1px solid rgba(77,82,89,0.05);
     margin-top: 24px;
     padding-top: 24px;

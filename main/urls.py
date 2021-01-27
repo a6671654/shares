@@ -21,4 +21,8 @@ urlpatterns = [
     path('shuoming/',views.shuoming),
     path('chuchun/',views.chuchun),
     path('clchaxun/',views.clchaxun),
+    path('celve/',views.celve),
+    path('update/',views.update),
+    path('kuariqi/',views.riqi),
+    path('riqicx/',views.riqicx),
 ]

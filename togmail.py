@@ -5,8 +5,8 @@ import threading
 
 
 def trysend(to,title,content):
-    account="wj6671654@163.com"
-    password="sskgoodmail1"
+    account=""
+    password=""
     server = smtplib.SMTP_SSL('smtp.163.com',465)
     server.docmd("EHLO server" )
     server.login(account,password)
